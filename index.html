@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR platba – 2803454216/2010</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --fg: #111;
+    --muted: #888;
+    --line: #e5e5e5;
+    --accent: #111;
+    --card: #fff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 16px;
+  }
+  .wrap { width: 100%; max-width: 460px; }
+  h1 {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 28px; }
+  .tabs {
+    display: flex;
+    gap: 24px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+  }
+  .tab {
+    background: none;
+    border: 0;
+    padding: 10px 0;
+    font: inherit;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tab.active { color: var(--fg); border-bottom-color: var(--fg); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  input[type=text], input[type=number] {
+    width: 100%;
+    padding: 10px 12px;
+    font: inherit;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--fg);
+    outline: none;
+    transition: border-color .15s;
+  }
+  input:focus { border-color: var(--fg); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .actions { display: flex; gap: 8px; margin-top: 8px; }
+  button.btn {
+    flex: 1;
+    padding: 11px 14px;
+    font: inherit;
+    background: var(--fg);
+    color: #fff;
+    border: 1px solid var(--fg);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  button.btn.secondary {
+    background: #fff;
+    color: var(--fg);
+  }
+  button.btn:hover { opacity: 0.85; }
+  .qr {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .qr canvas, .qr img {
+    width: 240px;
+    height: 240px;
+    image-rendering: pixelated;
+  }
+  .meta {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .meta strong { color: var(--fg); font-weight: 500; }
+  .spayd {
+    font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--muted);
+    word-break: break-all;
+    background: #f5f5f5;
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin-top: 8px;
+  }
+  .api-block { margin-top: 16px; }
+  .api-block code {
+    display: block;
+    font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: #f5f5f5;
+    padding: 10px 12px;
+    border-radius: 6px;
+    word-break: break-all;
+    color: var(--fg);
+  }
+  .api-block .h {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 14px 0 6px;
+  }
+  footer {
+    margin-top: 28px;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .reset-link {
+    background: none;
+    border: 0;
+    color: var(--muted);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>QR platba</h1>
+  <div class="sub">Účet 2803454216/2010 · CZK</div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="auto">Auto</button>
+    <button class="tab" data-tab="manual">Manuální</button>
+    <button class="tab" data-tab="api">API</button>
+  </div>
+
+  <div class="panel active" data-panel="auto">
+    <div class="card">
+      <div class="meta">
+        Další platba · <strong id="auto-vs">00001</strong> · <strong id="auto-amount">1 Kč</strong>
+      </div>
+      <div class="qr">
+        <canvas id="auto-qr"></canvas>
+        <div class="spayd" id="auto-spayd"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="auto-next">Další (+1 Kč)</button>
+        <button class="btn secondary" id="auto-reset">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="manual">
+    <div class="card">
+      <div class="row">
+        <div>
+          <label for="m-vs">Variabilní symbol</label>
+          <input type="text" id="m-vs" value="00001" maxlength="10" inputmode="numeric">
+        </div>
+        <div>
+          <label for="m-amount">Částka (Kč)</label>
+          <input type="number" id="m-amount" value="1" min="0" step="0.01">
+        </div>
+      </div>
+      <div>
+        <label for="m-msg">Zpráva (volitelné)</label>
+        <input type="text" id="m-msg" maxlength="60" placeholder="">
+      </div>
+      <div class="qr">
+        <canvas id="m-qr"></canvas>
+        <div class="spayd" id="m-spayd"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" data-panel="api">
+    <div class="card">
+      <div class="meta" style="text-align:left">
+        Předej parametry v URL — QR se vykreslí níže.
+      </div>
+      <div class="api-block">
+        <div class="h">Endpoint</div>
+        <code id="api-endpoint"></code>
+        <div class="h">Parametry</div>
+        <code>vs &nbsp;&nbsp;&nbsp; variabilní symbol (např. 42)
+am &nbsp;&nbsp;&nbsp; částka v Kč (např. 7.50)
+msg &nbsp;&nbsp; zpráva (volitelné)</code>
+        <div class="h">Příklad</div>
+        <code id="api-example"></code>
+      </div>
+      <div class="qr">
+        <canvas id="api-qr"></canvas>
+        <div class="spayd" id="api-spayd"></div>
+      </div>
+      <div class="meta" id="api-info" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <footer>SPAYD · IBAN CZ65 2010 0000 0028 0345 4216</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+(function () {
+  var IBAN = 'CZ6520100000002803454216';
+  var STORAGE_KEY = 'qr-counter-v1';
+
+  function pad5(n) { return String(n).padStart(5, '0'); }
+
+  function buildSpayd(vs, amountKc, msg) {
+    var parts = [
+      'SPD*1.0',
+      'ACC:' + IBAN,
+      'AM:' + Number(amountKc).toFixed(2),
+      'CC:CZK',
+      'X-VS:' + vs
+    ];
+    if (msg) {
+      var clean = String(msg).replace(/\*/g, ' ').toUpperCase().slice(0, 60);
+      parts.push('MSG:' + clean);
+    }
+    return parts.join('*');
+  }
+
+  function render(canvas, text) {
+    QRCode.toCanvas(canvas, text, {
+      margin: 1,
+      width: 480,
+      color: { dark: '#111111', light: '#ffffff' },
+      errorCorrectionLevel: 'M'
+    }, function (err) {
+      if (err) console.error(err);
+    });
+  }
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () {
+      var name = t.dataset.tab;
+      document.querySelectorAll('.tab').forEach(function (x) {
+        x.classList.toggle('active', x === t);
+      });
+      document.querySelectorAll('.panel').forEach(function (p) {
+        p.classList.toggle('active', p.dataset.panel === name);
+      });
+    });
+  });
+
+  // ---- Auto mode ----
+  function loadCounter() {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    var n = raw ? parseInt(raw, 10) : 1;
+    if (!Number.isFinite(n) || n < 1) n = 1;
+    return n;
+  }
+  function saveCounter(n) { localStorage.setItem(STORAGE_KEY, String(n)); }
+
+  function renderAuto() {
+    var n = loadCounter();
+    var vs = pad5(n);
+    var amount = n;
+    var spayd = buildSpayd(vs, amount, '');
+    document.getElementById('auto-vs').textContent = vs;
+    document.getElementById('auto-amount').textContent = amount + ' Kč';
+    document.getElementById('auto-spayd').textContent = spayd;
+    render(document.getElementById('auto-qr'), spayd);
+  }
+
+  document.getElementById('auto-next').addEventListener('click', function () {
+    saveCounter(loadCounter() + 1);
+    renderAuto();
+  });
+  document.getElementById('auto-reset').addEventListener('click', function () {
+    saveCounter(1);
+    renderAuto();
+  });
+
+  renderAuto();
+
+  // ---- Manual mode ----
+  var mVs = document.getElementById('m-vs');
+  var mAmount = document.getElementById('m-amount');
+  var mMsg = document.getElementById('m-msg');
+
+  function renderManual() {
+    var vs = (mVs.value || '0').replace(/\D/g, '') || '0';
+    var amount = parseFloat(mAmount.value);
+    if (!Number.isFinite(amount) || amount < 0) amount = 0;
+    var spayd = buildSpayd(vs, amount, mMsg.value);
+    document.getElementById('m-spayd').textContent = spayd;
+    render(document.getElementById('m-qr'), spayd);
+  }
+  [mVs, mAmount, mMsg].forEach(function (el) {
+    el.addEventListener('input', renderManual);
+  });
+  renderManual();
+
+  // ---- API mode (URL params) ----
+  var origin = location.origin + location.pathname;
+  document.getElementById('api-endpoint').textContent = origin + '?vs=<VS>&am=<AMOUNT>';
+  document.getElementById('api-example').textContent = origin + '?vs=42&am=7.50&msg=PLATBA';
+
+  var params = new URLSearchParams(location.search);
+  var apiVs = params.get('vs');
+  var apiAm = params.get('am') || params.get('amount');
+  var apiMsg = params.get('msg') || '';
+  var apiInfo = document.getElementById('api-info');
+
+  if (apiVs || apiAm) {
+    var vs = pad5(parseInt(apiVs || '1', 10) || 1);
+    var amount = parseFloat(apiAm || '1');
+    if (!Number.isFinite(amount) || amount < 0) amount = 0;
+    var spayd = buildSpayd(vs, amount, apiMsg);
+    document.getElementById('api-spayd').textContent = spayd;
+    render(document.getElementById('api-qr'), spayd);
+    apiInfo.innerHTML = 'VS <strong>' + vs + '</strong> · částka <strong>' + amount.toFixed(2) + ' Kč</strong>';
+    // auto-switch tab
+    document.querySelector('.tab[data-tab="api"]').click();
+  } else {
+    var spayd = buildSpayd('00042', 7.5, 'PLATBA');
+    document.getElementById('api-spayd').textContent = spayd;
+    render(document.getElementById('api-qr'), spayd);
+    apiInfo.textContent = 'Náhled výchozího příkladu.';
+  }
+})();
+</script>
+</body>
+</html>
