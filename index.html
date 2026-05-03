@@ -78,6 +78,13 @@
     transition: border-color .15s;
   }
   input:focus { border-color: var(--fg); }
+  input[readonly] {
+    background: #f5f5f5;
+    color: var(--fg);
+    cursor: default;
+    font-variant-numeric: tabular-nums;
+  }
+  input[readonly]:focus { border-color: var(--line); }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
   .actions { display: flex; gap: 8px; margin-top: 8px; }
   button.btn {
@@ -172,8 +179,8 @@
     <div class="card">
       <div class="row">
         <div>
-          <label for="m-vs">Variabilní symbol</label>
-          <input type="text" id="m-vs" value="00001" maxlength="10" inputmode="numeric">
+          <label>Variabilní symbol</label>
+          <input type="text" id="m-vs" value="00001" readonly tabindex="-1">
         </div>
         <div>
           <label for="m-amount">Částka (Kč)</label>
@@ -189,8 +196,8 @@
         <div class="spayd" id="m-spayd"></div>
       </div>
       <div class="actions">
-        <button class="btn" id="m-next">Další (+1 Kč)</button>
-        <button class="btn secondary" id="m-reset">Reset na 1</button>
+        <button class="btn" id="m-next">Další VS</button>
+        <button class="btn secondary" id="m-reset">Reset</button>
       </div>
     </div>
   </div>
@@ -268,7 +275,7 @@ msg &nbsp;&nbsp; zpráva (volitelné)</code>
     });
   });
 
-  // ---- Manual mode (with +1 increment & persistence) ----
+  // ---- Manual mode: VS auto (readonly), amount editable ----
   var mVs = document.getElementById('m-vs');
   var mAmount = document.getElementById('m-amount');
   var mMsg = document.getElementById('m-msg');
@@ -277,47 +284,48 @@ msg &nbsp;&nbsp; zpráva (volitelné)</code>
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
-      return JSON.parse(raw);
+      var s = JSON.parse(raw);
+      if (typeof s === 'number') return { vsCounter: s };
+      return s || null;
     } catch (e) { return null; }
   }
-  function saveState() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      vs: mVs.value, amount: mAmount.value, msg: mMsg.value
-    }));
+  function saveState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
-  var saved = loadState();
-  if (saved) {
-    if (saved.vs != null) mVs.value = saved.vs;
-    if (saved.amount != null) mAmount.value = saved.amount;
-    if (saved.msg != null) mMsg.value = saved.msg;
+  var saved = loadState() || {};
+  var vsCounter = Number.isFinite(saved.vsCounter) && saved.vsCounter >= 1 ? saved.vsCounter : 1;
+  if (saved.amount != null) mAmount.value = saved.amount;
+  if (saved.msg != null) mMsg.value = saved.msg;
+  mVs.value = pad5(vsCounter);
+
+  function persist() {
+    saveState({ vsCounter: vsCounter, amount: mAmount.value, msg: mMsg.value });
   }
 
   function renderManual() {
-    var vs = (mVs.value || '0').replace(/\D/g, '') || '0';
+    var vs = pad5(vsCounter);
+    mVs.value = vs;
     var amount = parseFloat(mAmount.value);
     if (!Number.isFinite(amount) || amount < 0) amount = 0;
     var spayd = buildSpayd(vs, amount, mMsg.value);
     document.getElementById('m-spayd').textContent = spayd;
     render(document.getElementById('m-qr'), spayd);
   }
-  [mVs, mAmount, mMsg].forEach(function (el) {
-    el.addEventListener('input', function () { saveState(); renderManual(); });
+  [mAmount, mMsg].forEach(function (el) {
+    el.addEventListener('input', function () { persist(); renderManual(); });
   });
 
   document.getElementById('m-next').addEventListener('click', function () {
-    var vsNum = parseInt((mVs.value || '0').replace(/\D/g, ''), 10) || 0;
-    var amount = parseFloat(mAmount.value);
-    if (!Number.isFinite(amount)) amount = 0;
-    mVs.value = pad5(vsNum + 1);
-    mAmount.value = String(Math.round((amount + 1) * 100) / 100);
-    saveState();
+    vsCounter += 1;
+    persist();
     renderManual();
   });
   document.getElementById('m-reset').addEventListener('click', function () {
-    mVs.value = '00001';
+    vsCounter = 1;
     mAmount.value = '1';
-    saveState();
+    mMsg.value = '';
+    persist();
     renderManual();
   });
 
