@@ -164,28 +164,11 @@
   <div class="sub">Účet 2803454216/2010 · CZK</div>
 
   <div class="tabs" role="tablist">
-    <button class="tab active" data-tab="auto">Auto</button>
-    <button class="tab" data-tab="manual">Manuální</button>
+    <button class="tab active" data-tab="manual">Ruční</button>
     <button class="tab" data-tab="api">API</button>
   </div>
 
-  <div class="panel active" data-panel="auto">
-    <div class="card">
-      <div class="meta">
-        Další platba · <strong id="auto-vs">00001</strong> · <strong id="auto-amount">1 Kč</strong>
-      </div>
-      <div class="qr">
-        <canvas id="auto-qr"></canvas>
-        <div class="spayd" id="auto-spayd"></div>
-      </div>
-      <div class="actions">
-        <button class="btn" id="auto-next">Další (+1 Kč)</button>
-        <button class="btn secondary" id="auto-reset">Reset</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="panel" data-panel="manual">
+  <div class="panel active" data-panel="manual">
     <div class="card">
       <div class="row">
         <div>
@@ -204,6 +187,10 @@
       <div class="qr">
         <canvas id="m-qr"></canvas>
         <div class="spayd" id="m-spayd"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="m-next">Další (+1 Kč)</button>
+        <button class="btn secondary" id="m-reset">Reset na 1</button>
       </div>
     </div>
   </div>
@@ -281,41 +268,30 @@ msg &nbsp;&nbsp; zpráva (volitelné)</code>
     });
   });
 
-  // ---- Auto mode ----
-  function loadCounter() {
-    var raw = localStorage.getItem(STORAGE_KEY);
-    var n = raw ? parseInt(raw, 10) : 1;
-    if (!Number.isFinite(n) || n < 1) n = 1;
-    return n;
-  }
-  function saveCounter(n) { localStorage.setItem(STORAGE_KEY, String(n)); }
-
-  function renderAuto() {
-    var n = loadCounter();
-    var vs = pad5(n);
-    var amount = n;
-    var spayd = buildSpayd(vs, amount, '');
-    document.getElementById('auto-vs').textContent = vs;
-    document.getElementById('auto-amount').textContent = amount + ' Kč';
-    document.getElementById('auto-spayd').textContent = spayd;
-    render(document.getElementById('auto-qr'), spayd);
-  }
-
-  document.getElementById('auto-next').addEventListener('click', function () {
-    saveCounter(loadCounter() + 1);
-    renderAuto();
-  });
-  document.getElementById('auto-reset').addEventListener('click', function () {
-    saveCounter(1);
-    renderAuto();
-  });
-
-  renderAuto();
-
-  // ---- Manual mode ----
+  // ---- Manual mode (with +1 increment & persistence) ----
   var mVs = document.getElementById('m-vs');
   var mAmount = document.getElementById('m-amount');
   var mMsg = document.getElementById('m-msg');
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) { return null; }
+  }
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      vs: mVs.value, amount: mAmount.value, msg: mMsg.value
+    }));
+  }
+
+  var saved = loadState();
+  if (saved) {
+    if (saved.vs != null) mVs.value = saved.vs;
+    if (saved.amount != null) mAmount.value = saved.amount;
+    if (saved.msg != null) mMsg.value = saved.msg;
+  }
 
   function renderManual() {
     var vs = (mVs.value || '0').replace(/\D/g, '') || '0';
@@ -326,8 +302,25 @@ msg &nbsp;&nbsp; zpráva (volitelné)</code>
     render(document.getElementById('m-qr'), spayd);
   }
   [mVs, mAmount, mMsg].forEach(function (el) {
-    el.addEventListener('input', renderManual);
+    el.addEventListener('input', function () { saveState(); renderManual(); });
   });
+
+  document.getElementById('m-next').addEventListener('click', function () {
+    var vsNum = parseInt((mVs.value || '0').replace(/\D/g, ''), 10) || 0;
+    var amount = parseFloat(mAmount.value);
+    if (!Number.isFinite(amount)) amount = 0;
+    mVs.value = pad5(vsNum + 1);
+    mAmount.value = String(Math.round((amount + 1) * 100) / 100);
+    saveState();
+    renderManual();
+  });
+  document.getElementById('m-reset').addEventListener('click', function () {
+    mVs.value = '00001';
+    mAmount.value = '1';
+    saveState();
+    renderManual();
+  });
+
   renderManual();
 
   // ---- API mode (URL params) ----
