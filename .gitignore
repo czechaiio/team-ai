@@ -1,0 +1,9 @@
+# Secrets & runtime
+.env
+workspace/
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/

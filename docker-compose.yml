@@ -1,0 +1,35 @@
+# GPU server deployment for the Claude Code + Codex agent control plane.
+#
+#   docker compose build
+#   docker compose up -d
+#   docker compose exec agents agent-login claude   # one-time
+#   docker compose exec agents agent-login codex     # one-time
+#
+# Requires the NVIDIA Container Toolkit on the host for GPU access.
+services:
+  agents:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: team-ai/agents:latest
+    container_name: team-ai-agents
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${API_PORT:-8080}:8080"      # HTTP control plane
+      - "${OLLAMA_PORT:-11434}:11434" # Ollama (local models)
+    volumes:
+      - agent-creds:/data            # persisted OAuth credentials + ollama models
+      - ./workspace:/workspace       # repos the agents operate on
+    # --- GPU access (NVIDIA Container Toolkit) ---
+    gpus: all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+volumes:
+  agent-creds:
