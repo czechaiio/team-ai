@@ -1,0 +1,8 @@
+Given lattice paths $P$ and $Q$ from $(0, 0)$ to $(m, r)$, with $P$ never rising above $Q$ or incident with $Q$ at any point, we define two matroids in terms of $P$ and $Q$.
+
+For the first matroid, let $P = p_1p_2\cdots p_n$ and $Q = q_1q_2\cdots q_n$. If $p_{u_1}, p_{u_2}, \ldots, p_{u_r}$ are the north steps of $P$ with $u_1 < u_2 < \cdots < u_r$ and $q_{l_1}, q_{l_2}, \ldots, q_{l_r}$ be the north steps of $Q$ with $l_1 < l_2 < \cdots < l_r$.
+Let $N_i$ be the interval $[l_i,u_i]$ of integers. Let $M[P,Q]$ be the transversal matroid on the ground set $[n]$ that has the presentation $(N_1,N_2,\ldots,N_r).$ A matroid $M$ for which there exists $P, Q$ such that $M = M[P, Q]$ is called a lattice path matroid.
+
+For the second matroid, label the rows of the diagram enclosed by $P$ and $Q$, from bottom to top, by $1$ through $r$, and the columns, from left to right, by $r+1$ to $r+m$. For each $i \in [r]$, let the set $A_{i}$ consist of $i$ along with the labels of all columns that have a square in row $i$. The rook matroid $R[P, Q]$ is the transversal matroid with the presentation $(A_{1}, \ldots , A_{r})$. A matroid $M$ for which there exists $P, Q$ such that $M = R[P, Q]$ is called a rook matroid.
+
+Let $\lambda/\mu$ be the skew shape enclosed by the region bounded by $P$ and $Q$; then $\lambda/\mu$ determines and is determined by $P, Q$. For $\alpha/\beta = 888888765/76654321$, find the number of lattice path matroids that are isomorphic to the rook matroid defined by $\alpha/\beta$.

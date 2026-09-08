@@ -1,0 +1,15 @@
+Let $G(a_1,a_2,\ldots,a_n;z)$ be a Goncharov polylogarithm, such that for complex numbers $a_1,a_2,\ldots,a_n$, and $z$, are defined recursively by:
+$$
+G(;z)=1
+$$
+$$
+G(a_1,a_2,\ldots,a_n;z) = \int_0^z \frac{dt}{t-a_1} G(a_2,\ldots,a_n;t)
+$$
+with the common shuffle regularization: $G(0;z)=\log(z)$;
+Another examples are $G(1;z)=\log(1-z)$, and $G(x;z)=\log(1-z/x)$ where $\log(z)$ is the natural logarithm;
+
+
+ Now consider the analytic continuation of polylogarithms: $G(x;y) = G(y;x) + i \pi +G(0;y)-G(0;x)$ which is done with a fixed branch choice. Note that this has the same information as the more familiar formula:
+$$\log(x-y) = i\pi+\log(y-x)$$
+
+ With that same branch choice, obtain a formula for $G(x,1;y)$ in terms of polylogs where $y$ is only allowed to be on the right of the semicolon when the numbers to the left of the semicolon are 0 or 1, and where $x$ is allowed to be in the right of the semicolon when the numbers to the left of the semicolon are either of $0,1$ or $y$.

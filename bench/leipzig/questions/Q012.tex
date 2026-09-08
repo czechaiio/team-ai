@@ -1,0 +1,31 @@
+Define a map $s$ from the set of all permutations of length $n$ to that same set as follows.
+\begin{enumerate}
+\item If $n=1$, then $s(1)=1$.
+\item If $p=LnR$, that is $L$ is the substring on the left of the entry $n$, then $s(p)=s(L)s(R)n$.
+\end{enumerate}
+This operation $s$ is often called the stack sorting.
+
+Let $B_{n,k}$ be the set of permutations $p$ of length $n$ for which all of the following hold.
+\begin{enumerate}
+\item The permutation $s(p)$ avoids the patterns $2314$ and $3124$.
+\item The number of descents of $p$ is $k-1$.
+\end{enumerate}
+
+A \emph{block move} is an operation that turns the permutation
+\[
+p = p_1 p_2 \cdots p_i\ p_{i+1}\cdots p_j\ p_{j+1}\cdots p_k\ p_{k+1}\cdots p_\ell \cdots p_n
+\]
+into the permutation
+\[
+p' = p_1 p_2 \cdots p_i\ p_{k+1}\cdots p_\ell\ p_{j+1}\cdots p_k\ p_{i+1}\cdots p_j\ p_{\ell+1}\cdots p_n.
+\]
+That is, a block move interchanges the string $p_{i+1}\cdots p_j$ and the string $p_{k+1}\cdots p_{\ell}$, for some numbers $i<j<k<\ell$. If $p,p'\in S_n$, and $t$ is the smallest integer so that there exists a sequence of $t$ block moves that turn $p$ into $p'$, then we say that $t=\mathbf{d}(p,p')$ is the \emph{distance} of $p$ and $p'$.
+
+For a given permutation $p$, let $D_{p}(k)$ be the set of all permutations $q$ that are at distance $k$ from $p$.
+
+How many pairs of permutations $(p,\pi)$ are there so that
+\begin{enumerate}
+\item both $p$ and $\pi$ are of length $30$, and
+\item $p\in B_{30,15}$, and
+\item $\pi \in D_p(10)$, that is, $\pi$ is at distance $10$ from $p$?
+\end{enumerate}

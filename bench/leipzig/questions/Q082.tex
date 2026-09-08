@@ -1,0 +1,15 @@
+Let $G$ be an undirected graph with $d$ vertices. Let $\mathcal{I}_G$ be the set of global Markov statements $A\!\perp\!\!\!\!\perp\! B|S$ for $G$ (where ``$\perp\!\!\!\!\perp$'' stands for ``independent'') such that the collection $\{A,B,S\}$ is a partition of $V$.
+For any vector $x\in\mathbb{R}^d$ and any subset $S\subseteq[d]$, we denote by $x_S$ the projection of $x$ onto the coordinates with indices in $S$. Fix a subset $\mathcal{X}\subseteq\mathbb{R}^d$ and define $\mathcal{P}^{(0)}_{G}:=\operatorname{conv}(\mathcal{X})\subseteq\mathbb{R}^d$, where ``$\operatorname{conv}$'' stands for convex hull. For $i\ge 1$ define
+\[
+    \mathcal{P}^{(i)}_{G} := \operatorname{conv}\bigcup_{A\perp\!\!\!\!\perp B|S\in\mathcal{I}_G}\{(x_A,y_B,x_S),(y_A,x_B,x_S)\mid(x_A,x_B,x_S),(y_A,y_B,x_S)\in\mathcal{P}^{(i-1)}_{G}\}\,.
+\]
+Suppose now that $d=4$ and that $\mathcal{X}$ is the set of $10$ points in $\mathbb{R}^4$ whose coordinates are the columns of the matrix
+\[
+    \left(\!\begin{array}{cccccccccc}
+      \frac{10}{9}&1&1&\frac{4}{5}&\frac{4}{5}&\frac{3}{2}&\frac{5}{9}&\frac{1}{5}&\frac{8}{3}&\frac{2}{5}\\[7pt]
+      \frac{3}{5}&\frac{6}{5}&4&\frac{5}{2}&\frac{1}{9}&6&\frac{3}{4}&2&1&\frac{3}{2}\\[7pt]
+      \frac{3}{2}&\frac{3}{2}&\frac{3}{5}&3&\frac{4}{3}&\frac{2}{3}&\frac{1}{3}&\frac{4}{5}&2&\frac{1}{2}\\[7pt]
+      2&1&\frac{2}{5}&1&\frac{8}{9}&1&1&1&\frac{9}{4}&2
+      \end{array}\!\right)\,.
+\]
+Determine the number of vertices of $\mathcal{P}^{(2)}_{G}$ with respect to the $4$-cycle $G$.

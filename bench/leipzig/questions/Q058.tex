@@ -1,0 +1,50 @@
+Let \(G_1,\dots,G_N\) be independent standard Gaussian vectors in
+\(\mathbb{R}^2\), and set
+\[
+    S_N:=\frac{1}{N}\sum_{j=1}^N G_jG_j^{\top}.
+\]
+For \(N\) large enough, define
+\[
+    Y_j^{(N)}:=S_N^{-1/2}G_j,
+    \qquad j=1,\dots,N.
+\]
+Set
+\[
+    u_1=(1,0),
+    \qquad
+    u_2=\left(-\frac{1}{2},\frac{\sqrt3}{2}\right),
+    \qquad
+    u_3=\left(-\frac{1}{2},-\frac{\sqrt3}{2}\right).
+\]
+For \(u\in S^1\), define
+\[
+    Q_N(u)
+    :=
+    \frac{1}{N}
+    \sum_{j=1}^N
+    \left|
+        \left\langle Y_j^{(N)},u\right\rangle
+    \right|^6 .
+\]
+Finally, let
+\[
+    B:=
+    \begin{pmatrix}
+        2 & 1\\
+        1 & 3
+    \end{pmatrix}.
+\]
+
+Determine the exact value of
+\[
+    \lim_{N\to\infty}
+    \frac{1}{N^{1/3}}
+    \log
+    \mathbb{P}\left(
+        Q_N(u_1)\ge 27,\ 
+        Q_N(u_2)\ge 27,\ 
+        Q_N(u_3)\ge 27,\ 
+        N^{1/3}(S_N-I_2)\succeq B
+    \right),
+\]
+where \(\succeq\) denotes the Loewner order on symmetric matrices.

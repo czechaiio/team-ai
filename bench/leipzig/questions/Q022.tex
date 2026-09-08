@@ -1,0 +1,22 @@
+Let \(Q\) be the poset on $\{1,2,3\}\times\{1,2,3,4\}$ obtained from the product of two chains by deleting exactly the cover relations
+\[
+(2,1)<(2,2),\qquad (2,3)<(2,4),\qquad (3,2)<(3,3).
+\]
+For each \(\sigma\in S_4\), label \((p,j)\in Q\) by $\ell_\sigma(p,j)=p+3(\sigma(j)-1)$. If \(\pi=(q_1,\dots,q_{12})\) is a linear extension of \(Q\), define
+\[
+\operatorname{des}_{\ell_\sigma}(\pi)
+=
+\#\{i\in\{1,\dots,11\}:\ell_\sigma(q_i)>\ell_\sigma(q_{i+1})\}.
+\]
+Set
+\[
+F_Q(x)
+=
+\sum_{\sigma\in S_4}\sum_{\pi\in L(Q)}
+x^{\operatorname{des}_{\ell_\sigma}(\pi)}.
+\]
+
+Determine the coefficients \(\gamma_i\) in the expansion
+\[
+F_Q(x)=\sum_i \gamma_i x^i(1+x)^{\deg F_Q-2i}.
+\]

@@ -1,0 +1,70 @@
+Fix \(n\in\mathbb{N}\), \(r\in[n]\), \(q\ge 4\), and
+    \(0<t_1<\cdots<t_n\). Set
+    \(
+    X_n:=2^{\{t_1,\dots,t_n\}}.
+    \)
+    For \(c=(c_1,\dots,c_p)\in\mathbb{R}^p\), define
+    \(\Psi_c:X_n^p\to X_n\) as follows. Given
+    \(E=(E_1,\dots,E_p)\), write
+    \[
+    \bigcup_{j=1}^p E_j=\{s_1<\cdots<s_a\}.
+    \]
+    Let \(z_0:=0\), and for \(i=1,\dots,a\) put
+    \[
+    z_i
+    :=
+    \mathbf{1}_{\{z_{i-1}\le 1\}} \cdot (z_{i-1})_+
+    +
+    \sum_{j=1}^p c_j\mathbf{1}_{\{s_i\in E_j\}} .
+    \]
+    Then
+    \[
+    \Psi_c(E):=\{s_i:1\le i\le a,\ z_i>1\}.
+    \]
+    
+    Let
+    \[
+    \alpha=(K,n_1,\dots,n_{K-1},B^{(1)},\dots,B^{(K)}),
+    \qquad
+    n_0=n_K=1,
+    \]
+    with \(B^{(\ell)}\in\mathbb{R}^{n_\ell\times n_{\ell-1}}\). If
+    \(b_i^{(\ell)}\) denotes the \(i\)-th row of \(B^{(\ell)}\), define
+    \[
+    G_\alpha^{(0)}(E):=E,
+    \qquad
+    G_\alpha^{(\ell)}(E)
+    :=
+    \bigl(
+    \Psi_{b_1^{(\ell)}}(G_\alpha^{(\ell-1)}(E)),
+    \dots,
+    \Psi_{b_{n_\ell}^{(\ell)}}(G_\alpha^{(\ell-1)}(E))
+    \bigr).
+    \]
+    Impose
+    \(
+    \max_{\ell,j}\#\{i:B_{ij}^{(\ell)}\neq 0\}\le q .
+    \)
+    For \(\rho\in[n]\), let \(\mathcal G_{n,\rho,q}\) be the class of all maps
+    \(g:X_n\to X_n\) for which there exists an \(\alpha\) satisfying the above constraint such that $g=G_\alpha^{(K)}$ and $|g(\{t_1,\dots,t_n\})|\le \rho$. Define
+    \[
+    \mathfrak{N}(n,\rho,q)
+    :=
+    \sup_{g\in\mathcal G_{n,\rho,q}}
+    \min_{\substack{\alpha:\,G_\alpha^{(K)}=g\\
+    \max_{\ell,j}\#\{i:B_{ij}^{(\ell)}\neq 0\}\le q}}
+    \sum_{\ell=1}^K n_\ell
+    \]
+    and
+    \[
+    \mathfrak{S}(n,\rho,q)
+    :=
+    \sup_{g\in\mathcal G_{n,\rho,q}}
+    \min_{\substack{\alpha:\,G_\alpha^{(K)}=g\\
+    \max_{\ell,j}\#\{i:B_{ij}^{(\ell)}\neq 0\}\le q}}
+    \#\{(\ell,i,j):B_{ij}^{(\ell)}\neq 0\}.
+    \]
+    Determine the asymptotic order, up to polylogarithmic factors, of
+    \[
+        \mathfrak{N}(n,n,q)+\mathfrak{S}(n,r,q).
+    \]

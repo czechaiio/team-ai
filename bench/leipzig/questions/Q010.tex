@@ -1,0 +1,5 @@
+Let $c = (1, 2, \dots, n)$ be the standard $n$-cycle in the symmetric group $S_n$. For $p$ satisfying $\gcd(p, n) = 1$ with multiplicative inverse $p'$ so that $pp'=1 \mod n$, let $w \in S_n$ be the permutation with $w(i) \equiv i \cdot p' \pmod n$, so that $w c^p w^{-1} = c.$
+
+Let $B: S_n \to B_n$ be the positive lift of a permutation to the braid group on $n$ strands.  For $n=7$ and $p=5$, express the pure braid $B(w) B(c)^p B(w)^{-1} B(c)^{-1}$ in terms of the Artin generators of the pure braid group $t_{ij} := \sigma_i \sigma_{i+1} \cdots \sigma_{j-2} \sigma_{j-1}^2 \sigma_{j-2}^{-1} \cdots \sigma_{i+1}^{-1} \sigma_i^{-1}$.
+
+For example, if $n=4$ and $p=3$, $w=[3,2,1,4]$ and we should return the list [(2, 3), (1, 3), (1, 2)], representing the pure braid $t_{23} t_{13} t_{12}$.

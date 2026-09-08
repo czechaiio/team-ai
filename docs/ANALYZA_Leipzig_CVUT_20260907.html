@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Benchmarks in Leipzig — analýza a co z toho postavit pro ČVUT</title>
+<style>
+body{margin:0;background:#fff;color:#111;font:15px/1.55 -apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif}
+.w{max-width:1040px;margin:0 auto;padding:36px 28px 70px}
+h1{font-size:30px;line-height:1.2;margin:0 0 6px}
+h2{font-size:21px;margin:38px 0 10px;padding-top:14px;border-top:2px solid #111}
+h3{font-size:16px;margin:22px 0 6px}
+.sub{color:#555;margin:0 0 18px}
+.box{border:1px solid #ddd;border-left:5px solid #1a56db;background:#f7f9ff;padding:12px 16px;margin:14px 0;border-radius:6px}
+.box.r{border-left-color:#c62828;background:#fff5f5}
+.box.g{border-left-color:#2e7d32;background:#f3fbf4}
+table{border-collapse:collapse;width:100%;margin:10px 0 16px;font-size:14px}
+th,td{border:1px solid #d6d6d6;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#f0f0f0}
+td.n,th.n{text-align:right;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}
+.kpi{border:1px solid #ddd;border-radius:8px;padding:12px 14px}
+.kpi b{display:block;font-size:26px;line-height:1.1}
+.kpi span{color:#555;font-size:13px}
+ul,ol{padding-left:22px}li{margin:3px 0}
+code{background:#f2f2f2;padding:1px 5px;border-radius:4px;font-size:13px}
+.small{font-size:13px;color:#555}
+a{color:#1a56db}
+.tag{display:inline-block;background:#e8eefc;color:#1a3f9e;border-radius:4px;padding:1px 7px;font-size:12px;margin-right:4px}
+@media print{.w{padding:0}}
+</style></head><body><div class="w">
+
+<h1>Benchmarks in Leipzig — co to je, co z toho plyne a co z toho můžeme postavit pro ČVUT</h1>
+<p class="sub">Analýza článku arXiv:2606.05818 (4. 6. 2026, 29 stran) a platformy math.sciencebench.ai · sestaveno 7. 9. 2026 · CzechAI / A&amp;L Prime s.r.o.<br>
+Zdroje: <a href="https://arxiv.org/abs/2606.05818">arxiv.org/abs/2606.05818</a> · <a href="https://math.sciencebench.ai/benchmarks/benchmarks-in-leipzig">math.sciencebench.ai/benchmarks/benchmarks-in-leipzig</a> · <a href="https://math.sciencebench.ai/benchmarks">přehled výsledků modelů</a></p>
+
+<div class="box"><b>Jednou větou:</b> 49 matematiků (Max Planck Institute, Lipsko) sepsalo 100 výzkumných otázek s jednoznačnou odpovědí, nechalo je řešit pět špičkových modelů a zjistilo, že po třech kolech zůstaly nevyřešené jen 2. Závěr autorů: <i>„psaní zkouškových otázek na základě veřejného výzkumu už u nejlepších modelů narazilo na strop."</i> Pro ČVUT je to hlavně <b>návod, jak takový benchmark a workshop uspořádat</b>, a pro nás <b>zadání na platformu, kterou umíme postavit z toho, co už provozujeme</b>.</div>
+
+<h2>1. Fakta z článku</h2>
+<div class="grid">
+<div class="kpi"><b>100</b><span>otázek s jednoznačnou, „neuhádnutelnou" odpovědí</span></div>
+<div class="kpi"><b>49</b><span>přispívajících matematiků, 35 na místě (workshop 11.–13. 5. 2026, MPI MiS Lipsko)</span></div>
+<div class="kpi"><b>41 → 16 → 2</b><span>nevyřešených otázek po etapě 1, 2 a 3</span></div>
+<div class="kpi"><b>88 %</b><span>vyřešil GPT-5.5 Pro s Extended Thinking (3 běhy na otázku)</span></div>
+<div class="kpi"><b>1 067</b><span>tahů ve 483 chatech: 39 ze 49 badatelů používalo chat s modely</span></div>
+<div class="kpi"><b>16 nálezů</b><span>AI kontrola: 12 otázek přeformulováno, 3 vyřazeny</span></div>
+</div>
+
+<h3>Kdo za tím stojí</h3>
+<ul>
+<li><b>Vedoucí projektu:</b> Christian Stump (Ruhr-Universität Bochum), který zároveň provozuje platformu ScienceBench (© 2026, jediný uvedený provozovatel). Organizátoři: Veronica Calvo Cortes a Bernd Sturmfels (MPI MiS Lipsko).</li>
+<li><b>Financování:</b> MPI MiS zaplatil cestu, ubytování a API volání; přispěvatelé nebyli placeni. Externí hromadné běhy modelů (20× na otázku) dělala firma <b>Surge AI</b>.</li>
+<li><b>Obory:</b> algebraická geometrie 36, algebraická kombinatorika 22, matroidy 18, teorie reprezentací 15, enumerativní kombinatorika 15, kombinatorika 14, diskrétní geometrie 10 … (otázka může mít víc oborů). Silně odráží zaměření MPI MiS, ne matematiku obecně.</li>
+</ul>
+
+<h3>Tři etapy hodnocení</h3>
+<table>
+<tr><th>Etapa</th><th>Co se dělo</th><th>Výsledek</th></tr>
+<tr><td>1 — jeden pokus</td><td>5 aktivních modelů, každý 1× přes API, bez nástrojů a bez webu</td><td>GPT-5.5 <b>44</b>, Gemini 3.1 Pro 15, Claude Opus 4.7 13, DeepSeek-V4-Pro 10, Grok 4.3 6 vyřešených otázek → 41 nevyřešeno</td></tr>
+<tr><td>2 — 20 běhů</td><td>Surge AI, 3 modely × 100 otázek × 20 běhů = 6 000 běhů</td><td>GPT-5.5 vyřešil 75 otázek (52 % správných běhů), Gemini 3.1 Pro 44 (20 %), Claude Opus 4.7 40 (15 %) → 16 nevyřešeno</td></tr>
+<tr><td>3 — těžké myšlení</td><td>GPT-5.5 Pro Extended Thinking 3× (ručně přes ChatGPT web), Gemini 3.1 Pro Deep Think 3× (Surge AI)</td><td>GPT-5.5 Pro <b>88</b> otázek (79 % správných běhů), Gemini Deep Think 56 (47 %) → <b>2 nevyřešeno</b> (otázka 099 kolčany/reprezentace, otázka 100 permutace a hustota „shattered" trojic)</td></tr>
+</table>
+
+<h3>Pravidla pro otázky (to je ta cenná část pro ČVUT)</h3>
+<ul>
+<li>Odpověď musí být <b>jednoznačná, dobře definovaná a neuhádnutelná</b> (číslo, polynom, vzorec s parametry) — <b>ne důkaz</b>, ne „nutná/postačující podmínka".</li>
+<li>Otázka musí být tak těžká, že ji v prvním pokusu vyřeší <b>nejvýš 3 z 5 modelů</b>, jinak ji systém nepustí dál.</li>
+<li>Složitost nesmí být jen výpočetní (CAS je povolený, ale nesmí být jádrem).</li>
+<li>Řešení musí stát na <b>veřejně dostupném</b> výzkumu (nesmí to být otevřený problém) — autoři přiznávají, že to badatele omezovalo, raději by dávali otázky ze své aktuální práce.</li>
+</ul>
+
+<h3>Pracovní postup na platformě (W1–W3) a audit (A1–A3)</h3>
+<ol>
+<li><b>W1</b> zadání otázky + odpovědi → <b>W2</b> 5 modelů zkusí otázku, LLM-soudce porovná s odpovědí; projde jen když správně ≤ 3 modely → <b>W3</b> autor doplní vypracované řešení a reference (modely je nikdy nevidí; slouží k tomu, aby si autor řešení opravdu promyslel — u více otázek to odhalilo chybu v odpovědi).</li>
+<li><b>A1</b> všichni vidí všechny otázky i odpovědi modelů, diskuse → <b>A2</b> LLM revize každé otázky (překlepy, nekonzistence, chybějící obsah, chyby v úvaze): 16 nálezů, 12 úprav, 3 vyřazení → <b>A3</b> autoři znovu prošli otázky nevyřešené po etapě 3. Během etap 2 a 3 navíc autoři opravili tři odpovědi <b>podle odpovědi GPT-5.5 Pro</b> a jednu změnili na něco jiného, než tvrdil model.</li>
+</ol>
+
+<h3>Technická nastavení, která stojí za to opsat</h3>
+<ul>
+<li>Nástroje (web, kód, výpočty) byly <b>vypnuté</b> — se zapnutými modely brute-forcovaly, padaly na timeout a byly horší.</li>
+<li>Efforty: GPT-5.5 xhigh, Gemini 3.1 Pro medium, Claude Opus 4.7 high, DeepSeek-V4-Pro high, Grok 4.3 high; limit 128k tokenů (Gemini 64k, Claude bez parametru). Při chybě/timeoutu až 3 opakování.</li>
+<li>Soudce odpovědí: GPT-5.5 + Gemini 3.1 Pro. Kontrola souladu otázky s pravidly: totéž.</li>
+<li>Konzistence (tabulka 6): GPT-5.5 vyřešil 27 otázek ve všech 20 bězích, ale 25 ani jednou; Claude Opus 4.7 vyřešil 19 otázek jen v ≤ 3 bězích z 20 — <b>jeden běh o modelu skoro nic neříká</b>.</li>
+<li>Křížové srovnání (tabulka 8): 52 otázek vyřešily oba těžké modely, 36 jen GPT-5.5 Pro, 4 jen Gemini Deep Think, 8 žádný.</li>
+</ul>
+
+<h3>Vývoj ScienceBench podle webu (kontext, proč Lipsko)</h3>
+<table>
+<tr><th>Sada</th><th class="n">Otázek</th><th>Nejlepší model</th><th class="n">Skóre</th></tr>
+<tr><td>1. 9. 2025</td><td class="n">140</td><td>GPT-5</td><td class="n">43 %</td></tr>
+<tr><td>26. 11. 2025</td><td class="n">140</td><td>Gemini 3 Pro</td><td class="n">46 %</td></tr>
+<tr><td>23. 3. 2026</td><td class="n">140</td><td>GPT-5.4</td><td class="n">68 %</td></tr>
+<tr><td>30. 4. 2026</td><td class="n">120</td><td>GPT-5.5</td><td class="n">64 %</td></tr>
+<tr><td>Lipsko, 5/2026</td><td class="n">100</td><td>GPT-5.5 Pro (etapa 3)</td><td class="n">88 %</td></tr>
+</table>
+<p class="small">Platforma dnes eviduje 325 úloh od 102 uživatelů, aktivní modely GPT-5.6 Sol, Claude Opus 4.8, Grok 4.3, Gemini 3.1 Pro; registrovaní uživatelé dostávají měsíční kredit na chat. Kód platformy není zveřejněn; JSON sady jsou ke stažení po přihlášení. Kontakt: contact@sciencebench.ai, hodnocení modelů: christian@sciencebench.ai.</p>
+
+<h2>2. Co z toho vyjde — závěry, které stojí za to říct ČVUT nahlas</h2>
+<ol>
+<li><b>„Zkouškové" benchmarky z veřejného výzkumu u nejlepších modelů saturují</b> — to je první klíčový závěr samotných autorů. Ilustrace (různé sady i protokoly, nesrovnávat přesně): září 2025 nejlepší model 43 % v jednom běhu, květen 2026 GPT-5.5 Pro 88 % otázek ve třech bězích. Další benchmark tohoto typu má cenu jen pro slabší modely, nebo když se posune k důkazům (IMProofBench), otevřeným problémům (First Proof, Riemann-Bench) nebo k nepublikovaným datům.</li>
+<li><b>Rozdíly mezi modely jsou obrovské a mezi běhy téhož modelu také</b> (autoři u obou píší „drasticky"). Kdo hodnotí model jedním během, měří šum. Seriózní hodnocení = desítky běhů na otázku; to bude podle nás hlavní nákladová položka (článek náklady neuvádí, běhy dělala externí firma).</li>
+<li><b>Vypnuté nástroje pomohly.</b> Proti intuici: s kódem a výpočty modely brute-forcovaly a selhávaly. Pro ČVUT to znamená, že „agent s nástroji" není automaticky lepší než čistý model.</li>
+<li><b>AI pomáhá recenzovat matematiku</b> (autoři: „potenciální přínos AI podpory v recenzním řízení"). LLM revize našla 16 problémů ve 100 otázkách od profesionálů; Epoch AI 11. 5. 2026 přiznala, že asi <b>třetina</b> úloh FrontierMath (tiery 1–4) měla fatální chyby. Náš závěr z toho: kvalita datové sady je dnes větší problém než výkon modelů.</li>
+<li><b>Badatelé chtějí chat v důvěryhodném prostředí.</b> 39 ze 49 ho používalo, průměrně 27 tahů na hlavu, za šest týdnů projektu (1. 4.–15. 5.). To je samostatný produkt (privátní multi-model chat pro akademiky) nezávisle na benchmarku.</li>
+<li><b>Sociální model funguje:</b> 3denní workshop, skupiny po 2–4 promíchané každý den, každý den tři fáze (přednáška či diskuse, práce ve skupinách, ukázky a shrnutí). 35 lidí na místě + 14 externích → 100 otázek. To je replikovatelné za jedno financování cesty a API.</li>
+</ol>
+
+<h3>Slabiny článku (co ČVUT bude chtít udělat líp)</h3>
+<ul>
+<li>Etapa 3 není srovnatelná: GPT-5.5 Pro byl opakovaně spouštěn ručně přes web, dokud neodpověděl, Gemini ne. Číslo 88 % je tím nadhodnocené.</li>
+<li>Tři odpovědi autoři opravili podle modelu (jednu naopak jinak než model) — hrozí kruh, kdy model soudí sám sebe. Soudce odpovědí je LLM (GPT-5.5 + Gemini), tedy dva z hodnocených modelů.</li>
+<li>Oborově úzké (MPI MiS = algebra, kombinatorika, geometrie): statistika jen algebraická (4 otázky), pravděpodobnost 1, teoretická informatika 1; žádná numerika, optimalizace, řízení ani inženýrství — přesně obory ČVUT.</li>
+<li>Výhradně angličtina; žádný test českého jazyka ani českého kontextu.</li>
+<li>Uzavřená platforma (podle webu ji provozuje Christian Stump), bez zveřejněného kódu. Kdo chce vlastní benchmark, musí buď získat účet, nebo si postavit vlastní.</li>
+<li>Riziko kontaminace: otázky stojí na veřejném výzkumu a od 4. 6. 2026 jsou i s odpověďmi na arXivu — příští modely je budou znát.</li>
+</ul>
+
+<h2>3. Co pro ČVUT můžeme postavit</h2>
+<div class="box g"><b>Doporučení:</b> nabídnout ČVUT <b>„Benchmarks in Prague"</b> — vlastní, otevřenou obdobu ScienceBench provozovanou na naší infrastruktuře, zaměřenou na obory ČVUT a češtinu, s workshopem podle lipského vzoru. Většinu stavebních bloků už máme v provozu, chybí hlavně přístupy k některým modelům (OpenAI, xAI, DeepSeek) a webové rozhraní pro přispěvatele.</div>
+
+<h3>A. Platforma pro sběr a hodnocení otázek (jádro)</h3>
+<table>
+<tr><th>Modul</th><th>Co dělá (podle lipského vzoru)</th><th>Co už máme</th><th>Co chybí</th></tr>
+<tr><td>Přispěvatelský portál</td><td>W1 otázka + odpověď → W2 automatický test 5 modelů + LLM soudce → W3 řešení a reference; prohlížení cizích otázek, komentáře, odpovědi modelů vedle sebe</td><td>webová infrastruktura, dokumentační a datové nástroje, přihlašování přes Google</td><td>samotná aplikace (Next.js/FastAPI), role, review</td></tr>
+<tr><td>Brána k modelům</td><td>paralelní volání GPT / Gemini / Claude / DeepSeek / Grok s nastaveným effortem, bez nástrojů, s opakováním při timeoutu</td><td><b>provozní brána k modelům</b> (Claude, Gemini, Nova; vlastní GPU server s otevřenými modely; měření nákladů, rozpočty)</td><td>přístupy k modelům OpenAI, xAI a DeepSeek; placený tarif Gemini</td></tr>
+<tr><td>Hromadné běhy</td><td>N běhů na otázku a model, fronta, restart, statistiky konzistence (tabulky 6–8)</td><td>plánované úlohy, databáze, Grafana</td><td>runner + reporting</td></tr>
+<tr><td>LLM soudce a AI recenze</td><td>porovnání odpovědí, kontrola pravidel, revize A2 (překlepy, nekonzistence, chybné úvahy)</td><td>agentní vrstva (stovky specializovaných agentů, workflow s oponenty), Právník AI = zkušenost s hodnocením odborného textu</td><td>promptová sada pro matematiku/inženýrství, kalibrace soudce (rubrika)</td></tr>
+<tr><td>Chat pro badatele</td><td>paralelní chat se všemi aktivními modely v důvěryhodném prostředí, kredity na uživatele</td><td>vlastní chatové rozhraní, brána s limity na uživatele</td><td>UI pro paralelní odpovědi, kreditní účty</td></tr>
+<tr><td>Veřejný žebříček + data</td><td>stránka výsledků, JSON export sady, verze sady s datem</td><td>show3/odkazy, generátory stránek</td><td>schéma dat, verze sad</td></tr>
+</table>
+
+<h3>B. Kde může ČVUT přinést něco, co Lipsko nemá</h3>
+<ul>
+<li><b>Obory ČVUT:</b> numerická matematika, optimalizace, pravděpodobnost a statistika, teoretická informatika, kryptografie, řízení, mechanika, elektrotechnika, stavební inženýrství. V lipské sadě je z toho dohromady 6 otázek (4 algebraická statistika, 1 pravděpodobnost, 1 teoretická informatika).</li>
+<li><b>Čeština a český kontext:</b> stejná otázka v CZ i EN — měření ztráty výkonu v češtině; úlohy z českých norem (ČSN), českého práva pro inženýry (stavební zákon), českých dat (ČÚZK, ČSÚ). Tady se potkáváme s naším Právníkem AI (577 tis. rozhodnutí, e-Sbírka).</li>
+<li><b>Důkazy místo odpovědí:</b> hodnocení důkazů posudkem (jako IMProofBench) místo jednoznačné odpovědi — u nejlepších modelů je to jediné, co ještě rozlišuje.</li>
+<li><b>Otevřenost:</b> otevřený kód, otevřená data, versionované sady — argument pro grant (TA ČR, OP JAK, Horizon) i pro spolupráci s MPI (Stump je otevřený externím hodnocením).</li>
+<li><b>Vlastní modely:</b> na vlastním GPU serveru umíme hodnotit i otevřené modely (Qwen, DeepSeek destilace) a případné modely ČVUT/ÚFAL, což ScienceBench nedělá.</li>
+</ul>
+
+<h3>C. Nabídka v etapách</h3>
+<table>
+<tr><th>Etapa</th><th>Obsah</th><th>Výstup</th><th>Čas</th></tr>
+<tr><td>0 — schůzka</td><td>zjistit, kdo na ČVUT zadává (FJFI? FIT? FEL? OICT?), cíl (článek, hodnocení modelů, grant), rozpočet na API</td><td>zadání na 1 stranu</td><td>1 týden</td></tr>
+<tr><td>1 — MVP</td><td>portál W1–W3, brána k 5 modelům, LLM soudce, žebříček; pilot na 20 otázkách od 5 lidí</td><td>běžící platforma na subdoméně (doména ČVUT nebo subdoména czechai.io)</td><td>3–4 týdny</td></tr>
+<tr><td>2 — workshop „Benchmarks in Prague"</td><td>3 dny podle lipského programu, 25–35 lidí, cíl 100 otázek; AI recenze A2 hned po workshopu</td><td>sada v1 + zpráva</td><td>4–6 týdnů pozvánek a sběru (Lipsko: 6 týdnů) + 3 dny + 1–2 týdny auditu</td></tr>
+<tr><td>3 — hromadné hodnocení</td><td>20 běhů × model × otázka, statistiky konzistence, těžké režimy (Pro/Deep Think)</td><td>tabulky jako v článku, arXiv preprint, veřejný JSON</td><td>2 týdny (limituje rychlost API)</td></tr>
+<tr><td>4 — provoz</td><td>průběžné sady po měsících (jako ScienceBench), chat pro akademiky, hodnocení nových modelů na zakázku</td><td>služba</td><td>trvale</td></tr>
+</table>
+
+<h3>D. Náklady, o kterých se musí mluvit dřív než o čemkoli jiném</h3>
+<ul>
+<li><b>API běhy jsou hlavní náklad.</b> Lipsko: etapa 1 nejméně 500 běhů aktivních modelů (plus předchůdci, opakování při chybách a opakované testy při přepracování otázek — přesné číslo článek neuvádí), etapa 2 = 6 000 běhů, etapa 3 = 600 běhů, plus 1 067 tahů chatu, plus revize. Při odpovědích v řádu desítek tisíc tokenů a effortu „high" jde o tisíce až nízké desítky tisíc USD podle cen modelů (přesný odhad uděláme až podle zvolených modelů a limitů tokenů — <b>zatím odhad, ne měření</b>).</li>
+<li><b>Rozpočty:</b> benchmark musí mít tvrdé rozpočty na klíč a model — naše brána to umí; bez toho se náklady hromadných běhů vymknou.</li>
+<li><b>Lidé:</b> přispěvatelé v Lipsku nebyli placeni; workshop zaplatil institut. Pro Prahu totéž — ČVUT dá lidi a prostor, my platformu a provoz, API zaplatí grant nebo sponzor (kdo v Lipsku platil běhy Surge AI, článek neuvádí).</li>
+</ul>
+
+<h3>E. Co říct ČVUT (návrh postoje)</h3>
+<div class="box">
+<p>„Lipský benchmark je dobrý recept, ale u dnešních modelů už měří skoro jen šum a kvalitu otázek. Smysl má udělat to <b>pro obory ČVUT, v češtině i angličtině, s důkazy a s otevřenými daty</b>, a hlavně mít <b>vlastní otevřenou platformu</b>, ne záviset na cizí uzavřené. My ji postavíme na tom, co už běží (brána k modelům, agentní hodnocení, GPU pro otevřené modely), vy dodáte lidi a obory. První pilot za měsíc, workshop do konce roku, preprint na jaře 2027."</p>
+</div>
+
+<h3>F. Co to přinese nám (CzechAI / A&amp;L Prime)</h3>
+<table>
+<tr><th>Přínos</th><th>Konkrétně</th><th>Kdy</th></tr>
+<tr><td><b>Reference z akademie</b></td><td>„Platformu pro hodnocení AI modelů používá ČVUT" je věta, která otevírá dveře u bank, pojišťoven a státu — přesně tam, kde dnes působíme s AML, Právníkem AI a audity. Univerzitní logo na referenčním listu má jinou váhu než firemní.</td><td>od pilotu</td></tr>
+<tr><td><b>Nový produkt: hodnocení modelů na zakázku</b></td><td>Stejná platforma umí ohodnotit jakýkoli model nebo agenta na jakékoli sadě otázek — pro banku (compliance), pro úřad (výběr dodavatele AI), pro firmu (výběr modelu do provozu). Dnes to nikdo v ČR nenabízí jako službu; ScienceBench dělá jen matematiku a jen v angličtině.</td><td>po etapě 1</td></tr>
+<tr><td><b>Vlastní důkaz kvality našich modelů</b></td><td>Naše otevřené modely na vlastním GPU serveru a Právník AI dostanou tvrdá čísla proti GPT, Gemini a Claude na stejných otázkách. To je argument do nabídek i do katalogu služeb, který dnes nemáme.</td><td>po etapě 3</td></tr>
+<tr><td><b>Lepší volba modelů v provozu</b></td><td>Benchmark dá tvrdá data o tom, který model za jakou cenu na jaký typ úlohy stačí. Výstup = routovací tabulka podle výkonu a ceny, použitelná ve všech našich službách.</td><td>průběžně</td></tr>
+<tr><td><b>Granty a veřejné peníze</b></td><td>Benchmark s univerzitou je typický projekt pro TA ČR, OP JAK nebo Horizon; univerzita umí žádat, my umíme dodat. Náklady na API a vývoj se tak dají zaplatit z grantu, ne z naší kapsy.</td><td>2027</td></tr>
+<tr><td><b>Data a lidé</b></td><td>Sada otázek z oborů ČVUT v češtině je jedinečná datová sada (nikdo ji nemá), použitelná i pro trénink a testování našich agentů. Workshop = 25–35 doktorandů a docentů, kteří poznají naše nástroje. To je nejpřirozenější cesta k budoucím spolupracovníkům.</td><td>po workshopu</td></tr>
+<tr><td><b>Viditelnost</b></td><td>Preprint na arXivu s ČVUT a CzechAI jako spoluautory, karta na show3, katalog služeb, tisková zpráva „první český benchmark výzkumné úrovně". Viditelnost, která má větší váhu než placená reklama.</td><td>po preprintu</td></tr>
+</table>
+<div class="box r"><b>Co to nepřinese a co hlídat:</b> peníze hned ne — první rok je to investice (vývoj 3–4 týdny + API). Akademie je pomalá, termíny posouvá. Když ČVUT chce jen „udělat to jako v Lipsku" bez vlastní platformy, je pro nás zajímavé jen jako reference, ne jako produkt. A hlavně: hromadné běhy modelů potřebují tvrdé rozpočty na bráně, jinak se náklady vymknou z kontroly.</div>
+
+<h2>4. Co si potřebujeme společně ujasnit</h2>
+<ol>
+<li>Kdo je na straně ČVUT garant a co od projektu čeká: článek, hodnocení modelů pro výuku, grant, nebo produkt?</li>
+<li>Má ČVUT vlastní nebo partnerské modely, které chce hodnotit (ÚFAL, vlastní fine-tuny)?</li>
+<li>Rozpočet na API a jeho zdroj. Bez toho nejde plánovat etapu hromadných běhů.</li>
+<li>Jazyk: jen angličtina, nebo i čeština? Obory: jen matematika, nebo i inženýrství?</li>
+<li>Chtějí spolupracovat s MPI/ScienceBench (Stump nabízí externí hodnocení na christian@sciencebench.ai), nebo jít vlastní cestou?</li>
+</ol>
+
+<h2>5. Soubory a odkaz</h2>
+<ul>
+<li>Tato zpráva online: <a href="https://router.czechai.io/web/cvut/cvut-2ihgem0sdo9famfq/">https://router.czechai.io/web/cvut/cvut-2ihgem0sdo9famfq/</a> · článek v PDF: <a href="https://router.czechai.io/web/cvut/cvut-2ihgem0sdo9famfq/arxiv_2606.05818.pdf">https://router.czechai.io/web/cvut/cvut-2ihgem0sdo9famfq/arxiv_2606.05818.pdf</a></li>
+</ul>
+<p class="small">Poznámka k ověření: všechna čísla v části 1 jsou z článku a z webu ScienceBench (staženo 7. 9. 2026). Odhad nákladů v části 3D je odhad, ne měření. Kód ScienceBench není veřejný, popis platformy vychází z článku a z veřejných stránek.</p>
+</div></body></html>

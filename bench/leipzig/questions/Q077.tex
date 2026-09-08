@@ -1,0 +1,9 @@
+Consider a triangulated surface with $11$ vertices and whose facets are given by the following set of triangles:
+\begin{multline*}
+\bigl\{(1,5,6),\ (1,2,6),\ (1,5,7),\ (5,10,7),\ (9,10,7),\ (4,7,9),\ (1,7,3),\\
+(1,3,4),\ (1,4,8),\ (1,8,9),\ (1,9,10),\ (1,10,2),\ (10,8,2),\ (10,3,8),\\
+(10,11,3),\ (2,3,11),\ (2,8,4),\ (4,5,2),\ (6,2,7),\ (2,11,7),\ (8,11,7),\\
+(3,7,8),\ (6,7,4),\ (6,4,3),\ (6,3,9),\ (6,9,8),\ (6,8,11),\ (6,11,5),\\
+(11,9,5),\ (2,3,5),\ (9,4,11),\ (10,11,4),\ (4,5,10),\ (3,9,5)\bigr\}.
+\end{multline*}
+To begin, find coordinates for each of the $11$ vertices, such that the topology of the surface is correct (its genus is the right one and facets overlap only on edges or vertices or the empty set; it has to be an embedded simplicial complex) and every triangle is flat (inside a hyperplane and is the convex hull of its vertices). This initial auxiliary answer should be a $3 \times 11$ matrix $A$ of integer numbers. Finally, multiply the $A$ you obtained by $y=[1,1,1]$, $yA=B$ is a $1 \times 11$ list of integer numbers. Call $D$ the number of distinct numbers you get in $B$. Multiply $D$ by the genus of the surface. Print that final number.

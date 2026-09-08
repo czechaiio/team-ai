@@ -1,0 +1,15 @@
+Consider the following matrix:
+\[
+A =\left(\!\begin{array}{cccccccccccccccc}
+     0&1&0&1&0&1&0&1&0&1&0&1&0&1&0&1\\
+     0&0&1&1&0&0&1&1&0&0&1&1&0&0&1&1\\
+     0&0&0&0&1&1&1&1&0&0&0&0&0&0&0&0\\
+     0&0&0&0&0&0&0&0&1&1&1&1&0&0&0&0\\
+     0&0&0&0&0&0&0&0&0&0&0&0&1&1&1&1
+\end{array}\!\right).
+\]
+We denote the $i$-th column of $A$ as $\alpha_i$, and we write $A = [\alpha_1,\dots,\alpha_{16}]$. Now, for a fixed choice of $W = (w_1,\dots,w_{16}) \in (\mathbb{C}^*)^{16}$ consider the polynomial map
+\[
+\Phi_W\colon(\mathbb{C}^*)^{5} \longrightarrow \mathbb{C}^{16}
+\]
+given by $\Phi_{W}(t) = (w_1 t^{\alpha_1},\dots,w_{16} t^{\alpha_{16}})$. What is the expected maximum likelihood degree of the Zariski closure of the image of this map for the choice $W = (1,1,1,1,1,-1,-1,1,4,-2,-2,1,c_1,c_2,c_3,c_4)$, where $c_1,c_2,c_3,c_4$ are generic complex numbers in the torus?
