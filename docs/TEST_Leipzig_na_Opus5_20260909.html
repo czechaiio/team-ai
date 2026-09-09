@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lipský benchmark spuštěný na Claude Opus 5 — výsledky replikace</title>
+<style>
+body{margin:0;background:#fff;color:#111;font:15px/1.55 -apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif}
+.w{max-width:1040px;margin:0 auto;padding:36px 28px 70px}
+h1{font-size:30px;line-height:1.2;margin:0 0 6px}
+h2{font-size:21px;margin:38px 0 10px;padding-top:14px;border-top:2px solid #111}
+h3{font-size:16px;margin:22px 0 6px}
+.sub{color:#555;margin:0 0 18px}
+.box{border:1px solid #ddd;border-left:5px solid #1a56db;background:#f7f9ff;padding:12px 16px;margin:14px 0;border-radius:6px}
+.box.r{border-left-color:#c62828;background:#fff5f5}
+.box.g{border-left-color:#2e7d32;background:#f3fbf4}
+.box.y{border-left-color:#b26a00;background:#fffaf2}
+table{border-collapse:collapse;width:100%;margin:10px 0 16px;font-size:14px}
+th,td{border:1px solid #d6d6d6;padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#f0f0f0}
+td.n,th.n{text-align:right;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}
+.kpi{border:1px solid #ddd;border-radius:8px;padding:12px 14px}
+.kpi b{display:block;font-size:26px;line-height:1.1}
+.kpi span{color:#555;font-size:13px}
+ul,ol{padding-left:22px}li{margin:3px 0}
+code{background:#f2f2f2;padding:1px 5px;border-radius:4px;font-size:13px}
+.small{font-size:13px;color:#555}
+a{color:#1a56db}
+.ok{color:#2e7d32;font-weight:600}.bad{color:#c62828;font-weight:600}
+@media print{.w{padding:0}}
+</style></head><body><div class="w">
+
+<h1>Lipský benchmark spuštěný na Claude Opus 5 — co z toho vyšlo</h1>
+<p class="sub">Navazuje na analýzu arXiv:2606.05818 ze 7. 9. 2026 · test proveden 8.–9. 9. 2026 · CzechAI / A&amp;L Prime s.r.o.<br>
+Model: Claude Opus 5 (<code>claude-opus-5</code>), nástroje vypnuté, agentní fan-out v Claude Code. Data a harness: <code>czechaiio/team-ai</code>, branch <code>claude/cvut-analyza-agenty-mcp-oclo4t</code>.</p>
+
+<div class="box"><b>Jednou větou:</b> pustili jsme 100 lipských otázek na Opus 5 za stejných podmínek jako článek (bez nástrojů, uzavřený kontext) a naměřili tři věci, které mají pro ČVUT přímý dopad: model <b>odpoví vždycky</b> (25 z 25 běhů, žádné „nevím"), jeho <b>vlastní confidence sedí na lipskou obtížnost</b> (medián 82 → 75 → 17 napříč tiery) a <b>rozchází se mezi běhy až u otázek, které v Lipsku nevyřešil nikdo</b>. Zásadní limit není kvalita modelu, ale propustnost: 46 běhů = 7,6 hodiny a dvakrát vyčerpaný rate limit.</div>
+
+<h2>1. Co jsme přesně udělali</h2>
+
+<table>
+<tr><th>Etapa v Lipsku</th><th>Nastavení tam</th><th>Co jsme udělali my</th></tr>
+<tr><td>1 — jeden pokus</td><td>5 modelů × 100 otázek × 1 běh, API, bez nástrojů</td><td>Opus 5 × 100 otázek × 1 běh, effort <code>high</code> (stejná hodnota, jakou článek použil pro Claude Opus 4.7, Table 2). <b>Doběhlo 7</b>, zbytek zabil output limit a rate limit — viz část 4.</td></tr>
+<tr><td>2 — 20 běhů</td><td>3 modely × 100 × 20 = 6 000 běhů, dělala firma Surge AI</td><td>neproveditelné (viz propustnost), nahrazeno vzorkem</td></tr>
+<tr><td>—</td><td>—</td><td><b>Šířka:</b> 6 otázek napříč všemi čtyřmi tiery obtížnosti, 1 běh, effort <code>medium</code> (nastavení, jaké článek použil pro Gemini 3.1 Pro)</td></tr>
+<tr><td>Table 6 — konzistence</td><td>rozptyl správných odpovědí přes 20 běhů</td><td><b>Konzistence:</b> 5 otázek × 3 nezávislé běhy, čisté kontexty, effort <code>medium</code></td></tr>
+</table>
+
+<h3>Podmínky, které jsme opsali z článku</h3>
+<ul>
+<li><b>Nástroje vypnuté.</b> Agent smí přečíst jediný soubor se zadáním, dál žádný web, žádné spuštění kódu, žádný CAS. (Článek: se zapnutými nástroji modely brute-forcovaly a byly horší.)</li>
+<li><b>Čistý kontext pro každý běh.</b> Žádné sdílení mezi otázkami ani mezi běhy téže otázky.</li>
+<li><b>Štítek obtížnosti z článku model nevidí.</b> Zadání dostane bez informace, ve které etapě ji Lipsko vyřešilo.</li>
+<li><b>Jedna odpověď požadovaného typu.</b> Ne důkaz, ne podmínky, ne několik kandidátů. Plus vlastní confidence 0–100, na které měříme kalibraci.</li>
+</ul>
+
+<div class="box r"><b>Klíčové omezení, které je nutné říct ČVUT nahlas: klíč se správnými odpověďmi neexistuje.</b>
+Appendix A článku obsahuje <b>jen zadání, ne odpovědi</b> — ověřeno v plném textu i PDF. Odpovědi zůstávají na platformě <code>math.sciencebench.ai</code> za přihlášením. Bez nich <b>nelze spočítat „correct runs / solved questions"</b> jako v Table 3–5, a tedy ani říct, kolik otázek Opus 5 vyřešil správně. Vše, co následuje, měří odpovědní chování a stabilitu — ne správnost.
+<br><br><b>Zároveň to znamená opravu v naší analýze ze 7. 9.:</b> v části „Slabiny článku" stojí, že otázky jsou od 4. 6. 2026 na arXivu „i s odpověďmi". To neplatí — na arXivu jsou pouze zadání. Riziko kontaminace budoucích modelů je tím menší, než jsme psali.</div>
+
+<h2>2. Výsledky</h2>
+
+<div class="grid">
+<div class="kpi"><b>25 / 25</b><span>běhů vydalo odpověď požadovaného typu — žádné „nevím"</span></div>
+<div class="kpi"><b>17</b><span>otázek pokryto, ve všech čtyřech tierech obtížnosti</span></div>
+<div class="kpi"><b>82 → 75 → 17</b><span>medián confidence pro tier Stage 1 / Stage 2 / Stage 3</span></div>
+<div class="kpi"><b>3 / 4</b><span>otázek s opakovanými běhy dalo pokaždé totožnou odpověď</span></div>
+<div class="kpi"><b>46</b><span>agentních běhů celkem, ~1,6 M tokenů, 7,6 h wall clocku</span></div>
+<div class="kpi"><b>8 / 15</b><span>běhů na effortu <code>high</code> přeteklo 64k output limit</span></div>
+</div>
+
+<h3>A. Answer rate: model odpoví vždycky</h3>
+<p>Všech 25 dokončených běhů vydalo jednu konkrétní odpověď požadovaného typu. Ani jeden se nevzdal — a to včetně obou otázek, které v Lipsku nevyřešil ani jeden z pěti modelů ve dvaceti bězích.</p>
+<div class="box y"><b>Co z toho plyne pro stavbu benchmarku:</b> článek eviduje „Answered" jako samostatný sloupec vedle „Correct runs", protože v Lipsku běhy bez odpovědi existovaly. U Opus 5 je tato metrika <b>bezcenná — vždy je 100 %</b>. Hodnocení tedy musí stát výhradně na správnosti proti klíči. Bez klíče se benchmark nedá provozovat vůbec; to není detail, to je první položka rozpočtu.</div>
+
+<h3>B. Kalibrace: model ví, kdy neví — a jeho jistota kopíruje lipskou obtížnost</h3>
+<table>
+<tr><th>Tier obtížnosti (štítek z článku)</th><th class="n">otázek</th><th class="n">běhů</th><th class="n">medián conf.</th><th class="n">průměr</th><th class="n">min–max</th></tr>
+<tr><td>solved in Stage 1 (nejsnazší)</td><td class="n">10</td><td class="n">13</td><td class="n">82,0</td><td class="n">77,7</td><td class="n">30–92</td></tr>
+<tr><td>solved in Stage 2</td><td class="n">3</td><td class="n">5</td><td class="n">75,0</td><td class="n">52,6</td><td class="n">4–76</td></tr>
+<tr><td>solved in Stage 3 (těžké myšlení)</td><td class="n">2</td><td class="n">3</td><td class="n">17,0</td><td class="n">17,0</td><td class="n">6–28</td></tr>
+<tr><td>remains unsolved (nevyřešeno nikým)</td><td class="n">2</td><td class="n">4</td><td class="n">35,5</td><td class="n">39,0</td><td class="n">27–58</td></tr>
+</table>
+<p>Sestupný trend přes první tři tiery je čistý a jde přes celý rozsah: z 82 na 17. Model tedy <b>nezávisle reprodukuje pořadí obtížnosti, které v Lipsku vzniklo z chování pěti jiných modelů</b>. To je dvojí zjištění: lipské štítky měří skutečnou obtížnost otázek, ne šum jednoho modelu, a Opus 5 svou nejistotu hlásí použitelně.</p>
+<div class="box g"><b>Přímo použitelné pro platformu:</b> lipská stage W2 potřebovala <b>pět modelů</b>, aby otestovala, že otázka není moc snadná (projde jen když ji správně vyřeší ≤ 3 z 5). Pokud self-reported confidence takhle spolehlivě sedí na obtížnost, dá se ta triáž udělat <b>jedním modelem a jeho vlastní jistotou</b> — a to je řádový rozdíl v ceně přispěvatelského portálu. Ověřit na větším vzorku, ale je to nejsilnější kandidát na úsporu, který z tohoto testu vypadl.</div>
+
+<h3>C. Konzistence mezi běhy (obdoba Table 6)</h3>
+<table>
+<tr><th>Otázka</th><th>Tier</th><th class="n">běhů</th><th class="n">různých odpovědí</th><th>odpovědi</th><th class="n">confidence</th></tr>
+<tr><td>Q004</td><td>Stage 1</td><td class="n">3</td><td class="n">1</td><td><span class="ok">69/13</span> — třikrát totožně</td><td class="n">88, 92, 92</td></tr>
+<tr><td>Q063</td><td>Stage 2</td><td class="n">3</td><td class="n">1</td><td><span class="ok">72</span> — třikrát totožně</td><td class="n">76, 75, 76</td></tr>
+<tr><td>Q090</td><td>Stage 3</td><td class="n">2</td><td class="n">1</td><td><span class="ok">7123</span> — dvakrát totožně (třetí běh spadl na timeout)</td><td class="n">28, 17</td></tr>
+<tr><td>Q099</td><td>remains unsolved</td><td class="n">3</td><td class="n">2</td><td><span class="bad">75</span>, poté <span class="bad">84</span>, <span class="bad">84</span> — rozchod</td><td class="n">38, 33, 27</td></tr>
+</table>
+<p>Rozchod nastal jedině u otázky, kterou v Lipsku nevyřešil žádný model ve dvaceti bězích. Na otázkách, které jsou v dosahu modelu, dal Opus 5 pokaždé tu samou odpověď — a to i u otázky z tieru Stage 3, kde si přitom sám dával confidence 17 a 28.</p>
+<div class="box y"><b>Nuance proti závěru článku.</b> Autoři píší, že rozdíly mezi běhy téhož modelu jsou „drastické" (Claude Opus 4.7 vyřešil 19 otázek v nejvýš 3 z 20 běhů) a že jeden běh nic neříká. Na našem vzorku se Opus 5 chová stabilněji: stabilita platí i tam, kde je nejistota vysoká. <b>Ale vzorek jsou 4 otázky, ne 100 × 20 běhů</b> — jako závěr to prodávat nelze, jako hypotézu k otestování ano. Prakticky: rozpočet na opakované běhy má smysl soustředit na otázky, které model označí jako nejisté, ne rozprostřít rovnoměrně na všechny.</div>
+
+<h3>D. Jediný případ nadhodnocené jistoty</h3>
+<p>Otázka <b>Q100</b> — jedna ze dvou, které v Lipsku nevyřešil nikdo — dostala confidence <b>58</b>, tedy nejvyšší v celém tieru nevyřešených a víc než kterákoli otázka z tieru Stage 3. To je přesně typ chyby, kterou má benchmark chytat, a důvod, proč se kalibrace nedá brát jako náhrada za klíč.</p>
+
+<h3>E. Kandidátní odpovědi na dvě otázky, které v Lipsku nevyřešil nikdo</h3>
+<table>
+<tr><th>Otázka</th><th>Téma</th><th>Odpověď Opus 5</th><th class="n">conf.</th></tr>
+<tr><td>Q099</td><td>kolčany / teorie reprezentací</td><td><code>84</code> ve dvou ze tří běhů (jednou <code>75</code>)</td><td class="n">27–38</td></tr>
+<tr><td>Q100</td><td>permutace, hustota „shattered" trojic</td><td><code>1/4</code></td><td class="n">58</td></tr>
+</table>
+<div class="box g"><b>To je konkrétní háček pro spolupráci s MPI.</b> Christian Stump nabízí externí hodnocení modelů (<code>christian@sciencebench.ai</code>). Poslat mu kandidátní odpovědi na obě otázky, které jeho benchmark neuzavřel, je dražší vstupní kartička než e-mail s nabídkou spolupráce — a ověření nás nic nestojí, protože klíč má on. Zároveň tím získáme první dva body skutečné správnosti a s nimi kalibrační bod pro celý zbytek testu.</div>
+
+<h2>3. Co z toho vyplývá pro nabídku ČVUT</h2>
+<ol>
+<li><b>Bez klíče není benchmark.</b> Tohle je hlavní poučení celého testu. Lipsko má hodnotu v odpovědích, ne v otázkách — a ty odpovědi nezveřejnilo. Kdo chce vlastní benchmark, musí si klíč vyrobit, a to je ta práce, kterou v Lipsku odvedlo 49 matematiků. Platforma bez klíče je prázdná skořápka. V nabídce to patří na první místo, ne do technických detailů.</li>
+<li><b>Triáž otázek jde možná zlevnit řádově.</b> Pokud confidence jednoho modelu nese informaci o obtížnosti tak dobře jako pořadí pěti modelů (část 2B), stage W2 nepotřebuje bránu k pěti dodavatelům. To je nejdražší část lipského protokolu a zároveň ta, kterou nám dnes chybí přístupy k modelům OpenAI, xAI a DeepSeek. Ověřit na 30–50 otázkách před tím, než to slíbíme.</li>
+<li><b>Rozpočet na opakované běhy patří tam, kde je model nejistý.</b> Lipsko dělalo 20 běhů na každou otázku plošně. Naše data naznačují, že u otázek s vysokou confidence je opakování skoro bez informace. Adaptivní protokol (opakuj podle nejistoty) je něco, co Lipsko nemá a co se dá publikovat.</li>
+<li><b>Propustnost je tvrdý limit, ne detail.</b> 46 běhů = 7,6 hodiny a dvakrát vyčerpaný limit. Etapa 2 v Lipsku měla 6 000 běhů; s dvaceti běhy na otázku a stovkou otázek na model jsme řádově na desetitisících běhů. Proto to Lipsko zadalo externí firmě. Naše brána k modelům s tvrdými rozpočty na klíč je pro tohle nutná podmínka, ne nadstavba.</li>
+<li><b>Limit výstupních tokenů je nutné nastavit na 128k.</b> Osm z patnácti běhů na effortu <code>high</code> přeteklo 64k a skončilo bez odpovědi. Článek u GPT-5.5 uvádí limit 128k. Kdo tohle nenastaví, měří výpadky své konfigurace a myslí si, že měří model.</li>
+</ol>
+
+<h2>4. Co selhalo a proč (úplný výčet)</h2>
+<table>
+<tr><th>Běh</th><th class="n">počet</th><th>Příčina</th><th>Dopad na výsledky</th></tr>
+<tr><td>Etapa 1, effort <code>high</code></td><td class="n">8</td><td>překročení 64k limitu výstupních tokenů — model promýšlel déle, než kolik povolovala konfigurace</td><td>otázky Q007, Q009–Q015 bez odpovědi; systematické, ne náhodné (postihuje nejtěžší běhy) — proto se z toho nedá dělat závěr o modelu</td></tr>
+<tr><td>Etapa 1</td><td class="n">85</td><td>vyčerpaný session rate limit</td><td>Q016–Q100 nespuštěno; nahrazeno stratifikovaným vzorkem</td></tr>
+<tr><td>Konzistence Q090#2</td><td class="n">1</td><td>stream idle timeout</td><td>Q090 vyhodnoceno ze 2 běhů místo 3</td></tr>
+<tr><td>Konzistence Q100#2, #3</td><td class="n">2</td><td>vyčerpaný rate limit</td><td>Q100 má zatím 1 běh, konzistence u ní nezměřena</td></tr>
+</table>
+<p class="small">Celkem 46 spuštěných agentních běhů, z toho 25 dokončených se strukturovaným výstupem. Souběžnost byla omezena na 2 agenty (4 CPU v kontejneru), což je hlavní příčina délky.</p>
+
+<h2>5. Co udělat dál, v tomto pořadí</h2>
+<ol>
+<li><b>Sehnat klíč.</b> Účet na <code>math.sciencebench.ai</code> (JSON sady jsou ke stažení po přihlášení), nebo e-mail Stumpovi s kandidátními odpověďmi na Q099 a Q100 jako otvírákem. Bez toho jsou všechny další běhy jen měření odpovědního chování.</li>
+<li><b>Nastavit limit výstupu na 128k</b> a doběhnout etapu 1 na plných 100 otázkách. Až s klíčem — jinak se ty běhy budou muset opakovat.</li>
+<li><b>Ověřit hypotézu o confidenci</b> na 30–50 otázkách. Pokud drží, je to jádro nabídky a zároveň publikovatelný výsledek.</li>
+<li><b>Až pak stavět portál.</b> Pořadí naopak (nejdřív aplikace, potom data) je nejčastější způsob, jak takový projekt umře.</li>
+</ol>
+
+<h2>6. Data a reprodukce</h2>
+<ul>
+<li>Repozitář: <code>czechaiio/team-ai</code>, branch <code>claude/cvut-analyza-agenty-mcp-oclo4t</code></li>
+<li><code>bench/leipzig/questions/</code> — 100 otázek rozřezaných po jedné (<code>Q001.tex</code>–<code>Q100.tex</code>), přesně to, co vidí agent</li>
+<li><code>bench/leipzig/results/run1_stage1_partial.json</code> — etapa 1, effort <code>high</code>, 7 odpovědí</li>
+<li><code>bench/leipzig/results/run2_sample.json</code> — vzorek + konzistence, effort <code>medium</code>, 18 odpovědí</li>
+<li><code>bench/leipzig/harness/</code> — <code>parse_otazky.py</code> (extrakce z arXiv zdroje) a workflow skripty obou běhů</li>
+<li><code>bench/leipzig/README.md</code> — metodika a úplný seznam odchylek od článku</li>
+</ul>
+<p class="small">Poznámka k ověření: čísla v části 2 jsou naměřená na uvedených 25 bězích a spočitatelná z JSON souborů v repozitáři. Údaje o lipském nastavení jsou z článku arXiv:2606.05818. Správnost odpovědí Opus 5 <b>nebyla ověřena</b> — klíč nebyl k dispozici. Věty o úspoře nákladů v části 3 jsou hypotézy odvozené z tohoto vzorku, ne měření.</p>
+</div></body></html>

@@ -1,0 +1,215 @@
+{
+  "run": "run2",
+  "model": "claude-opus-5",
+  "effort": "medium",
+  "tools": "disabled",
+  "output_token_cap": 64000,
+  "started_utc": "2026-09-09T12:36Z",
+  "completed": 18,
+  "attempted": 21,
+  "failures": {
+    "Q090#2": "stream idle timeout",
+    "Q100#2": "session rate limit",
+    "Q100#3": "session rate limit"
+  },
+  "results": [
+    {
+      "qid": 4,
+      "run": 1,
+      "leipzig_label": "solved in Stage 1",
+      "answer_short": "$m+n = \\tfrac{69}{13}$",
+      "answer": "m + n = 69/13. The unique parameter set is a=-3, b=66/13, c=13/2, d=0, e=1/2, f=6, g=41/13, h=-13, k=-2, m=56/13, n=1, p=-26, q=-2, r=-4.",
+      "confidence": 88,
+      "area": "Computational commutative algebra",
+      "method": "Treated the 5 generators as rewriting rules defining multiplication matrices X, Y on the 5-dim space with basis {1,x,x²,y,y²}; imposed XY=YX and solved the resulting linear/polynomial system.",
+      "produced_answer": true
+    },
+    {
+      "qid": 4,
+      "run": 2,
+      "leipzig_label": "solved in Stage 1",
+      "answer_short": "$m+n = \\tfrac{69}{13}$",
+      "answer": "m + n = 69/13, with m = 56/13 and n = 1. The full solution is a=-3, b=66/13, c=13/2, d=0, e=1/2, f=6, g=41/13, h=-13, k=-2, m=56/13, n=1, p=-26, q=-2, r=-4.",
+      "confidence": 92,
+      "area": "Computational commutative algebra (border bases)",
+      "method": "Treated the 5 generators as border-basis rewrite rules on basis {1,x,x^2,y,y^2}, built multiplication matrices Mx, My, imposed MxMy=MyMx (20 scalar equations), solved: d=0 branch, all 20 verified.",
+      "produced_answer": true
+    },
+    {
+      "qid": 4,
+      "run": 3,
+      "leipzig_label": "solved in Stage 1",
+      "answer_short": "$m+n=\\tfrac{69}{13}$",
+      "answer": "m + n = 69/13, from the unique solution m = 56/13, n = 1 (with a=-3, b=66/13, c=13/2, d=0, e=1/2, f=6, g=41/13, h=-13, k=-2, p=-26, q=-2, r=-4).",
+      "confidence": 92,
+      "area": "Commutative algebra / Groebner bases",
+      "method": "Turned generators into rewrite rules for x^3, xy, x^2y, xy^2, y^3 on basis {1,x,x^2,y,y^2}; imposed commutation of the multiplication matrices X,Y and solved the resulting linear/polynomial system (degenerate branch d=0), verifying all 25 component equations.",
+      "produced_answer": true
+    },
+    {
+      "qid": 20,
+      "run": 1,
+      "leipzig_label": "solved in Stage 1",
+      "answer_short": "3625",
+      "answer": "3625 Dyck paths of semilength 10 have bounce path equal to their reversing bounce path. (The counting sequence for n=1..10 is 1, 2, 4, 9, 22, 57, 154, 430, 1234, 3625.)",
+      "confidence": 76,
+      "area": "Enumerative combinatorics (Dyck paths)",
+      "method": "Encoded d by east-step heights h; bounce columns are the orbit of 0 under h. Showed bounce = reversing bounce iff h(c-1)<h(c) at every interior bounce column c, giving weight prod C(a_j+a_{j+1}-2, a_j-1) over bounce compositions; summed by transfer DP.",
+      "produced_answer": true
+    },
+    {
+      "qid": 33,
+      "run": 1,
+      "leipzig_label": "solved in Stage 1",
+      "answer_short": "$\\omega_1+\\cdots+\\omega_6 = 10/3$",
+      "answer": "The unique filling has ω = (1, 1, 1/3, 1/3, 1/3, 1/3) reading left-to-right, top-to-bottom (boxes (1,1),(1,2) equal 1; the other four equal 1/3), so ω₁+…+ω₆ = 10/3 ≈ 3.3333.",
+      "confidence": 30,
+      "area": "Schubert calculus / Wronski map",
+      "method": "Explicit asymptotics of the Wronski fiber in Gr(3,5): tropical scale chain from the tableau gives Plücker valuations 1,3,6,10,15,21; Newton polygon fixes leading coefficients, yielding diagonal equations 3ω=1 or ω=1.",
+      "produced_answer": true
+    },
+    {
+      "qid": 46,
+      "run": 1,
+      "leipzig_label": "solved in Stage 1",
+      "answer_short": "$\\Gamma=2I\\cong SL(2,5)$ (order 120), $a=\\pm11$, $\\mathcal I=\\tfrac{363}{2185}$, $C=\\tfrac{2\\sqrt{6555}}{33}\\approx4.9068$, $\\log BF\\to2$",
+      "answer": "(1) Γ = binary icosahedral group 2I ≅ SL(2,5), |Γ|=120 (E8). (2) a = ±11, i.e. F=uv(u^10±11u^5v^5−v^10). (3) With M1=∫Q dσ=25/1092 and M2=∫Q²dσ=125/204516, I = M2/M1²−1 = 2548/2185 − 1 = 363/2185 ≈ 0.166132. (4) C = 2/√I = 2√(2185/363) = 2√6555/33 ≈ 4.90680. (5) log-Bayes factor → h²I/2 = 2 nats (BF = e² ≈ 7.389); its limit law under H1 is N(2,4).",
+      "confidence": 82,
+      "area": "Invariant theory / asymptotic statistics",
+      "method": "E8 ⇒ binary icosahedral; Klein form fixes a=±11. Moments via ∫|u|^2p|v|^2q/(|u|²+|v|²)^{p+q}dσ=p!q!/(p+q+1)! gave M1=25/1092, M2=125/204516, so I=363/2185, C=2/√I.",
+      "produced_answer": true
+    },
+    {
+      "qid": 62,
+      "run": 1,
+      "leipzig_label": "solved in Stage 2",
+      "answer_short": "$i_{\\min}=2112$",
+      "answer": "i = 2112. Indeed dim X_20 = |Φ⁺|(r−1) = 66·19 = 1254, and the φ-induced (Frobenius-twisted) form is nondegenerate exactly on the 36·11 = 396 coordinates indexed by the positive roots outside Φ(G⁰) (odd-difference roots) at levels 1..11 = r_0−1, the remaining 858 directions being \"free\"; hence i_min = 396 + 2·858 = 2112. (r_1 = 15 is irrelevant: ψ_1 = χ∘det is central, and det is locally constant on X_r.)",
+      "confidence": 32,
+      "area": "p-adic Deligne–Lusztig theory",
+      "method": "Modeled X_r via root/level coordinates (U-coordinates free, others eliminated by Frobenius relations); computed radical of the φ-quadratic form; degree = N + 2M, calibrated on explicit GL_2, r=2,3 computations.",
+      "produced_answer": true
+    },
+    {
+      "qid": 63,
+      "run": 1,
+      "leipzig_label": "solved in Stage 2",
+      "answer_short": "72 (each of the 9 simple $T$-modules has $\\Omega$-period 8)",
+      "answer": "All nine simple modules over the trivial extension $T=A\\ltimes D(A)$ have $\\Omega$-period 8, so the sum of the $\\Omega$-periods is $9\\cdot 8=72$.",
+      "confidence": 76,
+      "area": "Representation theory of finite-dimensional algebras",
+      "method": "Built the quiver of T (linear quiver plus arrows from the bimodule socle paths [1,5],[2,6],[4,7],[6,8],[7,9]), lifted to the repetitive algebra, and computed minimal projective resolutions of all 9 simples; each returned the same simple after 8 steps (4 copy-shifts).",
+      "produced_answer": true
+    },
+    {
+      "qid": 63,
+      "run": 2,
+      "leipzig_label": "solved in Stage 2",
+      "answer_short": "72",
+      "answer": "Every one of the 9 simple modules over the trivial extension T = A ⋉ D(A) has Ω-period 8, so the sum of the Ω-periods is 9 × 8 = 72.",
+      "confidence": 75,
+      "area": "Representation theory of algebras",
+      "method": "Built T explicitly (quiver = A_9 line plus arrows 5→1,6→2,7→4,8→6,9→7 dual to maximal paths), described all 9 projective T-modules basis-wise, then computed minimal projective resolutions of each simple; each returned to itself after exactly 8 steps.",
+      "produced_answer": true
+    },
+    {
+      "qid": 63,
+      "run": 3,
+      "leipzig_label": "solved in Stage 2",
+      "answer_short": "72 (each of the 9 simples has $\\Omega$-period 8)",
+      "answer": "All nine simple modules over the trivial extension T = A ⋉ D(A) (a symmetric algebra of dimension 60) have Ω-period exactly 8, so the sum of the Ω-periods is 9·8 = 72.",
+      "confidence": 76,
+      "area": "Representation theory of algebras",
+      "method": "Built T explicitly: quiver = linear arrows 1→…→9 plus duals of maximal paths (5→1,6→2,7→4,8→6,9→7); wrote all 9 projectives (dims 6,7,7,8,8,8,7,5,4) and computed minimal syzygies of each simple by hand; every chain closed at Ω^8.",
+      "produced_answer": true
+    },
+    {
+      "qid": 75,
+      "run": 1,
+      "leipzig_label": "solved in Stage 2",
+      "answer_short": "$\\mathrm{RRdeg}_{10}(X)=162366016\\cdot 43506192^{9}\\approx 9.0\\times10^{76}$",
+      "answer": "RRdeg_10(X) = 162366016 · 43506192^9 (≈ 9.0e76), where 162366016 = ∫_X c_6(J^1(L)⊗L) is the order‑1 Rayleigh–Ritz (Rayleigh‑quotient) degree of X and 43506192 = ∑_i(-1)^i(2^{7-i}-1)∫_X c_i(T_X)ℓ^{6-i} is the generic ED degree of X, L=O(1,2,3,4,5,6).",
+      "confidence": 4,
+      "area": "Enumerative algebraic geometry",
+      "method": "Modeled RRdeg_k as critical Ritz pairs (critical points of the Rayleigh quotient on the k-secant); Thom–Porteous/Euler-class computation on X^k×P(U)×P^1 gave β·A^{k-1}/(k-1)!, rescaled to match RRdeg_k(P^n)=n+1.",
+      "produced_answer": true
+    },
+    {
+      "qid": 87,
+      "run": 1,
+      "leipzig_label": "solved in Stage 3",
+      "answer_short": "30",
+      "answer": "30 indecomposable spherical A-modules, where A is the Koszul dual of the Auslander algebra of the linearly oriented A_5 path algebra.",
+      "confidence": 6,
+      "area": "Representation theory of algebras",
+      "method": "Identified A as quiver on triangle {(i,j)}_{1<=i<=j<=5} with aa=bb=0, ab+ba=0, rad^3=0, gldim 4; derived Ext^i(M,A)=0 criterion (only P(k,5) non-injective), classified spherical simples (12); full indecomposable count estimated.",
+      "produced_answer": true
+    },
+    {
+      "qid": 90,
+      "run": 1,
+      "leipzig_label": "solved in Stage 3",
+      "answer_short": "7123",
+      "answer": "7123. Connected linear blocks with gldim=domdim=D (D even) exist exactly for sizes s ≡ 1 mod D (s ≥ D+1), one each; connected cyclic ones exactly for D | n, one each. Summing over even D the compositions of 20 into parts {1} ∪ {Dt+1} (minus the all‑semisimple one) gives 6764+249+54+22+10+8+6+4+2 = 7119, plus 4 cyclic (D = 2,4,10,20).",
+      "confidence": 28,
+      "area": "Representation theory of algebras (Nakayama algebras, homological dimensions)",
+      "method": "Classified higher Auslander Nakayama blocks via Iyama's correspondence (B with rad^2=0, d-cluster tilting), verified by hand for n≤7, then counted compositions of 20 into admissible block sizes.",
+      "produced_answer": true
+    },
+    {
+      "qid": 90,
+      "run": 3,
+      "leipzig_label": "solved in Stage 3",
+      "answer_short": "7123",
+      "answer": "7123 Nakayama algebras with 20 simples have even global dimension equal to their dominant dimension: 7119 linear ones (products of the unique connected block of size td+1 for each even d, together with semisimple blocks) plus 4 connected cyclic ones (one for each even divisor d of 20: d = 2, 4, 10, 20).",
+      "confidence": 17,
+      "area": "Representation theory of algebras (Nakayama algebras, homological dimensions)",
+      "method": "Derived syzygy/cosyzygy combinatorics for Kupisch series; classified connected blocks with gldim=domdim=d even (sizes td+1 linear, td cyclic); summed compositions of 20 with those parts.",
+      "produced_answer": true
+    },
+    {
+      "qid": 99,
+      "run": 1,
+      "leipzig_label": "remains unsolved",
+      "answer_short": "75",
+      "answer": "There are 75 distinct Luna types for representations of Q with d=(1,3,4,1), taken over all stability conditions admitting semistables (16 with a single part containing both vertices 1 and 4, plus 59 with separate parts for vertices 1 and 4).",
+      "confidence": 38,
+      "area": "Quiver representations / GIT moduli",
+      "method": "Enumerated decompositions d=Σm_i e_i with a common θ making each e_i stable, using Schofield's generic-subrepresentation criterion (⟨f,e-f⟩≥0 plus hom computations) to get cone conditions on θ; Kronecker parts are multiples of one primitive, counted by partitions of gcd.",
+      "produced_answer": true
+    },
+    {
+      "qid": 99,
+      "run": 2,
+      "leipzig_label": "remains unsolved",
+      "answer_short": "84",
+      "answer": "84 distinct Luna types occur for Q with d=(1,3,4,1) over all stability conditions admitting semistables (counting a Luna type as a multiset of pairs (stable dimension vector, multiplicity)).",
+      "confidence": 33,
+      "area": "Quiver moduli / GIT",
+      "method": "Listed Schur subroots of d; used sink/source subrepresentation and Schofield ext criteria to get exact stability inequalities (θ3>0, θ4<0, q>-c/b etc.); enumerated θ in the 2-dim space d^perp by cases (one summand at vertex 1, one at 4, middle summands of fixed slope), then counted multiplicity partitions: 1+16+62+5=84.",
+      "produced_answer": true
+    },
+    {
+      "qid": 99,
+      "run": 3,
+      "leipzig_label": "remains unsolved",
+      "answer_short": "84",
+      "answer": "84 distinct Luna types. (A Luna type is a datum {e: partition} with e a θ-stable Schur root and Σ|p^e|·e = (1,3,4,1); the union over all θ admitting semistables, including θ=0, has 84 members.)",
+      "confidence": 27,
+      "area": "Quiver representations / GIT moduli",
+      "method": "Enumerated Schur roots ≤ d via Tits form, computed generic sub-dimension vectors (Schofield) to get θ-stability inequalities, then classified all decompositions d=Σ m_i e_i admitting a common θ, decorating repeated summands by partitions.",
+      "produced_answer": true
+    },
+    {
+      "qid": 100,
+      "run": 1,
+      "leipzig_label": "remains unsolved",
+      "answer_short": "1/4",
+      "answer": "The maximum density of shattered triples tends to 1/4. It is attained by a self-similar 3-block \"rotation\" family {id, rev, σ, rev∘σ, τ, rev∘τ} (σ, τ cyclic shifts by n/3, 2n/3, recursed inside blocks), giving density 2/9 + (1/9)ρ = 1/4.",
+      "confidence": 58,
+      "area": "Extremal combinatorics of permutations (shattering / VC-type densities)",
+      "method": "Reduced shattering to \"three medians distinct\" = rainbow pair-coloring; proved D = 1/4 − (3/4)∫(f−g)² ≤ 1/4 identity; matching recursive 3-block rotation construction.",
+      "produced_answer": true
+    }
+  ]
+}

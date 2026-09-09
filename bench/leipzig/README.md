@@ -58,3 +58,40 @@ results/    surová i agregovaná data z běhů
 python3 harness/parse_otazky.py       # potřebuje x/problems.tex z arXiv e-printu
 # workflow se pouští z Claude Code tool Workflow se skriptem harness/wf_stage1.js
 ```
+
+## Výsledky
+
+Zpráva: [`docs/TEST_Leipzig_na_Opus5_20260909.html`](../../docs/TEST_Leipzig_na_Opus5_20260909.html)
+
+Naměřeno na 25 dokončených bězích přes 17 otázek ve všech čtyřech tierech obtížnosti:
+
+| metrika | hodnota |
+|---|---|
+| answer rate | 25/25 běhů vydalo odpověď požadovaného typu |
+| medián confidence, tier Stage 1 | 82,0 (n=13 běhů, 10 otázek) |
+| medián confidence, tier Stage 2 | 75,0 (n=5 běhů, 3 otázky) |
+| medián confidence, tier Stage 3 | 17,0 (n=3 běhy, 2 otázky) |
+| medián confidence, remains unsolved | 35,5 (n=4 běhy, 2 otázky) |
+| konzistence 3 běhů | shoda u Q004, Q063, Q090; rozchod u Q099 |
+
+Tři zjištění, která z toho plynou:
+
+1. **Answer rate je bezcenná metrika** — Opus 5 odpoví vždycky, včetně otázek,
+   které v Lipsku nevyřešil nikdo. Hodnocení musí stát na správnosti proti klíči.
+2. **Self-reported confidence kopíruje lipskou obtížnost** (82 → 75 → 17).
+   Model nezávisle reprodukuje pořadí, které v Lipsku vzniklo z chování pěti
+   jiných modelů. Kandidát na řádovou úsporu ve stage W2 — ověřit na větším vzorku.
+3. **Rozchod mezi běhy nastal jen u otázky, kterou v Lipsku nevyřešil nikdo.**
+   Naznačuje, že plošných 20 běhů na otázku je plýtvání a rozpočet patří tam,
+   kde model hlásí nejistotu. Vzorek 4 otázek — hypotéza, ne závěr.
+
+### Co selhalo
+
+| běh | počet | příčina |
+|---|---|---|
+| etapa 1, effort high | 8 | překročení 64k output limitu (článek uvádí 128k) |
+| etapa 1 | 85 | vyčerpaný session rate limit |
+| Q090#2 | 1 | stream idle timeout |
+| Q100#2, #3 | 2 | vyčerpaný session rate limit |
+
+Souběžnost byla 2 agenti (4 CPU), 46 běhů zabralo 7,6 h wall clocku.
