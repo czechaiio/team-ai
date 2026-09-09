@@ -63,27 +63,45 @@ python3 harness/parse_otazky.py       # potřebuje x/problems.tex z arXiv e-prin
 
 Zpráva: [`docs/TEST_Leipzig_na_Opus5_20260909.html`](../../docs/TEST_Leipzig_na_Opus5_20260909.html)
 
-Naměřeno na 25 dokončených bězích přes 17 otázek ve všech čtyřech tierech obtížnosti:
+Naměřeno na 33 dokončených bězích přes 17 otázek ve všech čtyřech tierech obtížnosti.
 
 | metrika | hodnota |
 |---|---|
-| answer rate | 25/25 běhů vydalo odpověď požadovaného typu |
-| medián confidence, tier Stage 1 | 82,0 (n=13 běhů, 10 otázek) |
-| medián confidence, tier Stage 2 | 75,0 (n=5 běhů, 3 otázky) |
-| medián confidence, tier Stage 3 | 17,0 (n=3 běhy, 2 otázky) |
-| medián confidence, remains unsolved | 35,5 (n=4 běhy, 2 otázky) |
-| konzistence 3 běhů | shoda u Q004, Q063, Q090; rozchod u Q099 |
+| answer rate | 33/33 běhů vydalo odpověď požadovaného typu |
+| medián confidence, tier Stage 1 | 82,0 (10 otázek, 13 běhů) |
+| medián confidence, tier Stage 2 | 75,0 (3 otázky, 5 běhů) |
+| medián confidence, tier Stage 3 | 17,0 (2 otázky, 5 běhů) |
+| medián confidence, remains unsolved | 39,0 (2 otázky, 10 běhů) |
 
-Tři zjištění, která z toho plynou:
+### Konzistence napříč nezávislými běhy
+
+| otázka | tier | běhů | různých odpovědí | rozdělení |
+|---|---|---|---|---|
+| Q004 | Stage 1 | 3 | 1 | `69/13` 3× |
+| Q063 | Stage 2 | 3 | 1 | `72` 3× |
+| Q090 | Stage 3 | 4 | 3 | `7123` 2×, `32` 1×, `16110` 1× |
+| Q099 | remains unsolved | 6 | 2 | `75` 4×, `84` 2× |
+| Q100 | remains unsolved | 4 | 2 | `1/4` 2×, `5/16` 2× |
+
+Tři zjištění:
 
 1. **Answer rate je bezcenná metrika** — Opus 5 odpoví vždycky, včetně otázek,
-   které v Lipsku nevyřešil nikdo. Hodnocení musí stát na správnosti proti klíči.
+   které v Lipsku nevyřešil nikdo, a včetně běhů s vlastní confidencí 4 ze 100.
+   Hodnocení musí stát na správnosti proti klíči.
 2. **Self-reported confidence kopíruje lipskou obtížnost** (82 → 75 → 17).
    Model nezávisle reprodukuje pořadí, které v Lipsku vzniklo z chování pěti
    jiných modelů. Kandidát na řádovou úsporu ve stage W2 — ověřit na větším vzorku.
-3. **Rozchod mezi běhy nastal jen u otázky, kterou v Lipsku nevyřešil nikdo.**
-   Naznačuje, že plošných 20 běhů na otázku je plýtvání a rozpočet patří tam,
-   kde model hlásí nejistotu. Vzorek 4 otázek — hypotéza, ne závěr.
+   Výjimka: Q100 (tier remains unsolved) má confidence 38–58, tedy vyšší než
+   celý tier Stage 3, a přitom se čtyři běhy rozdělily 2:2.
+3. **Stabilita se rozpadá přesně podle obtížnosti** — 100 % shoda u Stage 1 a
+   Stage 2, 50 % u Stage 3. Potvrzuje varování článku, že jeden běh o modelu
+   neříká skoro nic, a přidává strukturu: rozpad není náhodný a model ho dopředu
+   hlásí svou confidencí. Podklad pro adaptivní protokol (počet běhů řízený
+   nejistotou) se spodní hranicí běhů na otázku.
+
+**Pozor na artefakt malého vzorku.** První verze zprávy uzavřela pravý opak
+bodu 3 — v tu chvíli měla Q090 jen dva dokončené běhy a oba shodou okolností
+vrátily `7123`. Čtvrtý běh to obrátil.
 
 ### Co selhalo
 
@@ -91,7 +109,6 @@ Tři zjištění, která z toho plynou:
 |---|---|---|
 | etapa 1, effort high | 8 | překročení 64k output limitu (článek uvádí 128k) |
 | etapa 1 | 85 | vyčerpaný session rate limit |
-| Q090#2 | 1 | stream idle timeout |
-| Q100#2, #3 | 2 | vyčerpaný session rate limit |
+| vzorek, první průchod | 3 | 1× stream idle timeout, 2× rate limit; doběhnuto po resetu |
 
-Souběžnost byla 2 agenti (4 CPU), 46 běhů zabralo 7,6 h wall clocku.
+Souběžnost byla 2 agenti (4 CPU), 54 běhů zabralo ~9 h wall clocku.
